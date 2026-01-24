@@ -1,0 +1,434 @@
+---
+import Base from '../layouts/Base.astro';
+import ListingCard from '../components/ListingCard.astro';
+import CategoryNav from '../components/CategoryNav.astro';
+import InternalLinks from '../components/InternalLinks.astro';
+import OwnerCTA from '../components/OwnerCTA.astro';
+import NetworkLinks from '../components/NetworkLinks.astro';
+
+// Safe fetch helper for fake category pages
+async function safeFetch(url: string): Promise<any[]> {
+    try {
+        console.log('[fakeCat] Fetching:', url);
+        const res = await fetch(url, { 
+            headers: { 
+                'Accept': 'application/json',
+                'User-Agent': 'ErotikMaps-Satellite-Builder/1.0',
+                'X-Satellite-Build': 'true'
+            } 
+        });
+        if (!res.ok) return [];
+        const ct = res.headers.get('content-type') || '';
+        if (!ct.includes('application/json')) return [];
+        const data = await res.json();
+        return data.data || [];
+    } catch (e) {
+        console.error('[fakeCat] Fetch failed:', e);
+        return [];
+    }
+}
+
+// Fetch listings for this specific fake category
+const apiUrl = 'https://www.erotikmaps.com/api/v1/satellite/listings?city=rome&category=tantric-massage&limit=50';
+let listings = await safeFetch(apiUrl);
+
+// If no specific listings, fallback to main erotic-massage listings
+if (listings.length === 0) {
+    const fallbackUrl = 'https://www.erotikmaps.com/api/v1/satellite/listings?city=rome&category=erotic-massage&limit=30';
+    listings = await safeFetch(fallbackUrl);
+}
+
+const canonicalUrl = 'https://eroticmassagerome.com/tantric-massage';
+---
+
+<Base 
+    title="🕉️ Tantric Massage in Rome | Best Tantric Massage Venues 2026"
+    description="Discover the finest Tantric Massage venues in Rome, Italy. Browse verified listings with photos, reviews & contact info. Find Tantric Massage near you!"
+    canonical={canonicalUrl}
+    image={listings.length > 0 && listings[0].thumbnail ? listings[0].thumbnail : 'https://erotikmaps.com/images/og-default.jpg'}
+>
+    <!-- Hero Section -->
+    <section class="hero category-hero">
+        <div class="container">
+            <span class="hero-icon">🕉️</span>
+            <h1>Tantric Massage in Rome</h1>
+            <p class="hero-subtitle">
+                {listings.length > 0 
+                    ? `Discover ${listings.length} verified Tantric Massage venues in Rome` 
+                    : `Explore Tantric Massage experiences in Rome`
+                }
+            </p>
+        </div>
+    </section>
+    
+    <!-- Category Navigation - Internal Links to other massage types -->
+    <CategoryNav city="Rome" currentCategory="tantric-massage" />
+    
+    <!-- Intro Content - Rich SEO Content -->
+    <section class="intro">
+        <div class="container">
+            <h2>About Tantric Massage in Rome</h2>
+            <p>
+                Looking for authentic <strong>Tantric Massage</strong> experiences in Rome? 
+                Our curated directory features the best Tantric Massage venues in the Rome area. 
+                Whether you're a local or visiting Italy, we help you discover quality 
+                Tantric Massage services with verified listings, photos, and direct contact information.
+            </p>
+            <p>
+                Tantric Massage is known for its unique techniques and relaxing atmosphere. 
+                In Rome, you'll find a variety of establishments offering authentic 
+                Tantric Massage experiences, from traditional venues to modern wellness centers.
+            </p>
+        </div>
+    </section>
+    
+    <!-- What to Expect - Unique content per category -->
+    <section class="what-to-expect">
+        <div class="container">
+            <h2>What to Expect from Tantric Massage in Rome</h2>
+            <div class="expect-grid">
+                <div class="expect-card">
+                    <span class="expect-icon">🏢</span>
+                    <h3>Professional Venues</h3>
+                    <p>All listed Tantric Massage establishments in Rome are verified for authenticity and professionalism.</p>
+                </div>
+                <div class="expect-card">
+                    <span class="expect-icon">🔒</span>
+                    <h3>Privacy & Discretion</h3>
+                    <p>Tantric Massage venues in Rome prioritize client privacy with discreet locations and confidential services.</p>
+                </div>
+                <div class="expect-card">
+                    <span class="expect-icon">💯</span>
+                    <h3>Quality Service</h3>
+                    <p>Expect trained professionals who specialize in Tantric Massage techniques for the ultimate relaxation experience.</p>
+                </div>
+                <div class="expect-card">
+                    <span class="expect-icon">📍</span>
+                    <h3>Convenient Locations</h3>
+                    <p>Find Tantric Massage venues across Rome, from central areas to quieter neighborhoods.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- How to Choose - SEO Content -->
+    <section class="how-to-choose">
+        <div class="container">
+            <h2>How to Choose the Best Tantric Massage in Rome</h2>
+            <ol class="choose-steps">
+                <li>
+                    <strong>Browse our verified listings</strong> - All Tantric Massage venues on our directory have been reviewed for authenticity.
+                </li>
+                <li>
+                    <strong>Check photos and services</strong> - Each listing includes photos, service descriptions, and contact details.
+                </li>
+                <li>
+                    <strong>Look for Gold/Premium badges</strong> - These indicate venues that have been verified for exceptional quality.
+                </li>
+                <li>
+                    <strong>Contact directly</strong> - Use WhatsApp, phone, or email to inquire about availability and pricing.
+                </li>
+                <li>
+                    <strong>Read the FAQ section</strong> - Common questions about Tantric Massage in Rome are answered below.
+                </li>
+            </ol>
+        </div>
+    </section>
+    
+    <!-- Listings Grid -->
+    <section class="listings" id="listings">
+        <div class="container">
+            <h2>Tantric Massage Venues in Rome</h2>
+            {listings.length > 0 ? (
+                <div class="listings-grid">
+                    {listings.map((listing: any) => (
+                        <ListingCard listing={listing} />
+                    ))}
+                </div>
+            ) : (
+                <div class="no-listings">
+                    <p>No specific Tantric Massage venues found in Rome yet.</p>
+                    <p>
+                        <a href="/" class="btn-primary">Browse All Erotic Massage Venues →</a>
+                    </p>
+                    <p class="cta-text">
+                        Own a Tantric Massage venue in Rome? 
+                        <a href="https://gopremium.app/create-listing" rel="nofollow" title="Add your venue">
+                            List it for FREE
+                        </a>!
+                    </p>
+                </div>
+            )}
+        </div>
+    </section>
+    
+    <!-- Auto-generated FAQ for Category Pages -->
+    <section class="category-faq" id="faq">
+        <div class="container">
+            <h2>❓ Frequently Asked Questions about Tantric Massage in Rome</h2>
+            <div class="faq-grid">
+                <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+                    <h3 itemprop="name">What is Tantric Massage?</h3>
+                    <div itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+                        <p itemprop="text">Tantric Massage is a specialized form of massage that focuses on relaxation and wellness. In Rome, you can find various establishments offering authentic Tantric Massage experiences with trained professionals.</p>
+                    </div>
+                </div>
+                <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+                    <h3 itemprop="name">How much does Tantric Massage cost in Rome?</h3>
+                    <div itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+                        <p itemprop="text">Prices for Tantric Massage in Rome vary depending on the venue and services. We recommend contacting individual venues directly for current pricing. Look for Gold and Premium listings for verified quality establishments.</p>
+                    </div>
+                </div>
+                <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+                    <h3 itemprop="name">How do I book a Tantric Massage session in Rome?</h3>
+                    <div itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+                        <p itemprop="text">Browse our directory of Tantric Massage venues in Rome, select a venue that interests you, and contact them directly via WhatsApp, phone, or email. Most venues accept walk-ins but booking in advance is recommended.</p>
+                    </div>
+                </div>
+                <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+                    <h3 itemprop="name">Are the Tantric Massage venues in Rome verified?</h3>
+                    <div itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+                        <p itemprop="text">All venues listed on our directory have been reviewed for authenticity. Gold badge venues have been verified for exceptional quality, while Premium listings indicate verified professional establishments.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Related Categories - Smart Internal Links -->
+    <section class="related-cats">
+        <div class="container">
+            <h2>Explore Other Massage Types in Rome</h2>
+            <div class="related-grid">
+                <a href="/" class="related-link main">🏠 All Erotic Massage</a>
+                <a href="/nuru-massage" class="related-link">💆 Nuru Massage</a>
+                <a href="/tantric-massage" class="related-link">🕉️ Tantric Massage</a>
+                <a href="/body-to-body-massage" class="related-link">✨ Body to Body</a>
+                <a href="/sensual-massage" class="related-link">💕 Sensual Massage</a>
+                <a href="/happy-ending-massage" class="related-link">😊 Happy Ending</a>
+                <a href="/adult-massage" class="related-link">🔞 Adult Massage</a>
+            </div>
+            <p class="more-link">
+                Discover more <a href="https://erotikmaps.com/tantric-massage" title="Tantric Massage worldwide">Tantric Massage venues worldwide</a> on ErotikMaps
+            </p>
+        </div>
+    </section>
+    
+    <!-- Network Links - Links to other satellite sites -->
+    <NetworkLinks currentCity="Rome" currentCountry="Italy" category="erotic-massage" />
+    
+    <!-- Internal Links -->
+    <InternalLinks city="Rome" country="Italy" category="Tantric Massage" />
+    
+    <!-- Owner CTA -->
+    <OwnerCTA city="Rome" country="Italy" category="Tantric Massage" />
+    
+    <!-- Schema.org -->
+    <script type="application/ld+json" set:html={JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "CollectionPage",
+        "name": "Tantric Massage in Rome",
+        "description": "Directory of Tantric Massage venues in Rome, Italy",
+        "url": canonicalUrl,
+        "isPartOf": {
+            "@type": "WebSite",
+            "name": "Rome Erotic massage",
+            "url": "https://eroticmassagerome.com"
+        },
+        "breadcrumb": {
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+                { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://eroticmassagerome.com" },
+                { "@type": "ListItem", "position": 2, "name": "Tantric Massage", "item": canonicalUrl }
+            ]
+        }
+    })}></script>
+</Base>
+
+<style>
+    .category-hero {
+        text-align: center;
+    }
+    .hero-icon {
+        font-size: 4rem;
+        display: block;
+        margin-bottom: 15px;
+    }
+    
+    /* What to Expect Section */
+    .what-to-expect {
+        padding: 60px 0;
+        background: var(--card-bg);
+    }
+    .what-to-expect h2 {
+        text-align: center;
+        margin-bottom: 40px;
+    }
+    .expect-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 24px;
+    }
+    .expect-card {
+        background: var(--bg);
+        padding: 30px 24px;
+        border-radius: 16px;
+        text-align: center;
+    }
+    .expect-icon {
+        font-size: 2.5rem;
+        display: block;
+        margin-bottom: 16px;
+    }
+    .expect-card h3 {
+        font-size: 1.1rem;
+        margin-bottom: 10px;
+        color: var(--text);
+    }
+    .expect-card p {
+        font-size: 0.9rem;
+        color: var(--text-light);
+        line-height: 1.6;
+    }
+    @media (max-width: 900px) {
+        .expect-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 500px) {
+        .expect-grid { grid-template-columns: 1fr; }
+    }
+    
+    /* Category FAQ Section */
+    .category-faq {
+        padding: 60px 0;
+        background: var(--bg);
+    }
+    .category-faq h2 {
+        text-align: center;
+        margin-bottom: 40px;
+    }
+    .faq-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 24px;
+        max-width: 1000px;
+        margin: 0 auto;
+    }
+    .category-faq .faq-item {
+        background: var(--card-bg);
+        padding: 24px;
+        border-radius: 16px;
+        border-left: 4px solid var(--primary);
+    }
+    .category-faq .faq-item h3 {
+        font-size: 1rem;
+        margin-bottom: 12px;
+        color: var(--text);
+    }
+    .category-faq .faq-item p {
+        font-size: 0.9rem;
+        color: var(--text-light);
+        line-height: 1.7;
+        margin: 0;
+    }
+    @media (max-width: 768px) {
+        .faq-grid { grid-template-columns: 1fr; }
+    }
+    
+    /* How to Choose Section */
+    .how-to-choose {
+        padding: 60px 0;
+    }
+    .how-to-choose h2 {
+        text-align: center;
+        margin-bottom: 40px;
+    }
+    .choose-steps {
+        max-width: 700px;
+        margin: 0 auto;
+        padding-left: 0;
+        list-style: none;
+        counter-reset: step;
+    }
+    .choose-steps li {
+        counter-increment: step;
+        position: relative;
+        padding: 20px 20px 20px 70px;
+        margin-bottom: 16px;
+        background: var(--card-bg);
+        border-radius: 12px;
+        line-height: 1.6;
+    }
+    .choose-steps li::before {
+        content: counter(step);
+        position: absolute;
+        left: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 36px;
+        height: 36px;
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 1rem;
+    }
+    .choose-steps li strong {
+        color: var(--text);
+    }
+    
+    .no-listings {
+        text-align: center;
+        padding: 50px 20px;
+        background: var(--card-bg);
+        border-radius: 12px;
+    }
+    .no-listings p {
+        margin-bottom: 15px;
+    }
+    .cta-text {
+        font-size: 14px;
+        color: var(--text-light);
+    }
+    .related-cats {
+        padding: 50px 0;
+        background: var(--card-bg);
+    }
+    .related-cats h2 {
+        text-align: center;
+        margin-bottom: 25px;
+    }
+    .related-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        justify-content: center;
+        margin-bottom: 25px;
+    }
+    .related-link {
+        padding: 12px 20px;
+        background: var(--bg);
+        border-radius: 8px;
+        font-size: 14px;
+        color: var(--text);
+        transition: all 0.2s;
+    }
+    .related-link:hover {
+        background: var(--primary);
+        color: white;
+    }
+    .related-link.main {
+        background: var(--primary);
+        color: white;
+    }
+    .more-link {
+        text-align: center;
+        font-size: 14px;
+        color: var(--text-light);
+    }
+    .more-link a {
+        color: var(--primary);
+    }
+</style>

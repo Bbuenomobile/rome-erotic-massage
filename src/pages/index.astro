@@ -1,0 +1,600 @@
+---
+import Base from '../layouts/Base.astro';
+import ListingCard from '../components/ListingCard.astro';
+import InternalLinks from '../components/InternalLinks.astro';
+import OwnerCTA from '../components/OwnerCTA.astro';
+import CategoryNav from '../components/CategoryNav.astro';
+import NetworkLinks from '../components/NetworkLinks.astro';
+
+// Safe fetch helper for build-time API calls
+async function safeFetchJson(url: string): Promise<any[]> {
+    try {
+        console.log('Fetching:', url);
+        const res = await fetch(url, {
+            headers: { 
+                'Accept': 'application/json',
+                'User-Agent': 'ErotikMaps-Satellite-Builder/1.0',
+                'X-Satellite-Build': 'true'
+            }
+        });
+        
+        if (!res.ok) {
+            console.error('API returned ' + res.status + ': ' + res.statusText);
+            return [];
+        }
+        
+        const ct = res.headers.get('content-type') || '';
+        if (!ct.includes('application/json')) {
+            console.error('Expected JSON but got: ' + ct);
+            return [];
+        }
+        
+        const data = await res.json();
+        return data.data || [];
+    } catch (error) {
+        console.error('Fetch failed:', error);
+        return [];
+    }
+}
+
+// Fetch listings from API at build time
+const apiUrl = 'https://www.erotikmaps.com/api/v1/satellite/listings?city=rome&category=erotic-massage&limit=100';
+const listings = await safeFetchJson(apiUrl);
+
+const faq = [{"question":"What is the best Erotic massage in Rome?","answer":"<p>The best <strong>erotic massage in Rome<\/strong> shines in Trastevere's hidden gems or Parioli's elite parlors, where therapists blend ancient Roman bath techniques with sensual tantra. Top spots feature private suites with Tiber views, using local olive oils for 90-minute sessions of building tension and explosive release. Our verified listings highlight venues with 5-star reviews for discretion, skilled multi-lingual staff, and extras like champagne. Choose based on your vibe—bohemian or opulent—for an unmatched Eternal City experience amid historic charm. (87 words)<\/p>"},{"question":"How much does Erotic massage cost in Rome?","answer":"<p><strong>Erotic massage in Rome<\/strong> typically costs €80-€120 for a 60-minute standard session, €150-€250 for 90-minute deluxe or tantric options, and €300+ for couples. Prices reflect venue prestige—Trastevere spots are mid-range, while Parioli luxury runs higher. Pay in euros, cash preferred for tips (10-20%). Packages often include oils and privacy; book ahead for deals. Compared to Italy's €2 espresso, it's a worthwhile indulgence in the Eternal City's sensual scene. Always confirm inclusions to avoid surprises. (92 words)<\/p>"},{"question":"Is Erotic massage legal in Italy?","answer":"<p>Yes, <strong>erotic massage in Rome<\/strong> is legal in Italy as a wellness service, provided it stays non-sexual and venues are licensed. Prostitution is decriminalized for individuals but regulated for third parties, so stick to reputable parlors avoiding extras. Police focus on trafficking, not consensual adult services. Visitors should check venue permits, use our verified listings, and practice discretion—Romans value privacy. In Rome's liberal culture, it's widely accepted; just respect etiquette and age limits (18+). Safe, legal enjoyment awaits. (89 words)<\/p>"},{"question":"What are the best areas for Erotic massage in Rome?","answer":"<p>Prime areas for <strong>erotic massage in Rome<\/strong> include bohemian Trastevere, with its ivy-draped alleys and authentic trattorias; upscale Parioli, near Villa Borghese gardens for discreet luxury; and Prati, close to Vatican sights for convenient access. Avoid tourist traps near Termini Station. These neighborhoods offer atmospheric venues blending into Rome's daily life—think sessions after aperitivo amid mild 20°C evenings. Our 3 listings pinpoint the best, ensuring local flavor without seedy vibes. Proximity to metro lines makes them tourist-friendly. (91 words)<\/p>"},{"question":"What should I know before visiting a Erotic massage venue in Rome?","answer":"<p>Before an <em>erotic massage in Rome<\/em>, shower beforehand, arrive 5-10 minutes early, and communicate boundaries clearly—English is common, but learn <em>grazie<\/em> and <em>per favore<\/em>. Dress smart-casual; bring euros for tips. Respect no-phone policies for privacy, enjoyed in Rome's discreet culture. Sessions suit all fitness levels amid the city's balmy weather. Book via our directory for verified spots; check COVID rules. Hydrate post-session with Roman aqueduct water. Embrace the relaxed <strong>Italian tempo<\/strong>—no rush, pure indulgence. (86 words)<\/p>"}];
+const canonicalUrl = 'https://eroticmassagerome.com/';
+
+// HTML content from AI (stored as variables for set:html)
+const introHtml = `<p>In the heart of Rome, where ancient ruins whisper tales of emperors and lovers, <strong>erotic massage in Rome</strong> emerges as a contemporary indulgence rooted in the city's timeless passion for the body and soul. Unlike anywhere else, Rome fuses its Roman heritage of public baths and gladiatorial vigor with discreet, modern erotic artistry, offering visitors a sensory escape that feels both historic and electrifying.</p><p>What sets <em>erotic massage Rome</em> apart is the local flair: therapists often draw from Italy's celebrated wellness traditions, incorporating olive oil infusions reminiscent of ancient Roman unguents and techniques inspired by the steamy <strong>terme</strong> of antiquity. Expect venues tucked away in historic palazzos or near iconic landmarks, providing an atmosphere charged with the Eternal City's romantic aura. Whether you're wandering from the Colosseum or the Spanish Steps, these hidden gems promise personalized sessions that awaken every sense.</p><p>Rome's reputation for this intimate scene has grown quietly over decades, evolving from private clubs in the 1980s to today's refined parlors catering to discerning travelers. Neighborhoods like Trastevere, with its cobblestone alleys and bohemian vibe, or the upscale Parioli district, host some of the finest spots. Here, <strong>erotic massage in Rome</strong> isn't rushed; it's a languid ritual, often lasting 60-90 minutes, blending firm strokes with teasing caresses under the soft glow of Murano glass lamps.</p><p>For tourists and locals alike, these experiences stand out amid Rome's sun-drenched piazzas and gelato-scented streets. Amid the Mediterranean warmth—perfect year-round, even in balmy summer evenings—sessions incorporate aromatic essences of citrus from Sicilian groves or lavender from Umbrian hills, evoking Italy's fertile landscapes. Dive into this uniquely Roman pleasure, where history meets hedonism in the most tantalizing way.</p><p>Our directory spotlights verified havens, ensuring your foray into <em>erotic massage Rome</em> is safe, luxurious, and utterly authentic to the city's seductive spirit.</p>
+
+<h2>About Rome</h2>
+<p>Rome, the Eternal City, captivates with its layered history—from the Pantheon’s ancient dome to the Vatican’s Michelangelo masterpieces. Tourism thrives year-round, peaking in spring when jasmine blooms along the Tiber River, drawing millions to toss coins in the Trevi Fountain for a return visit. The city's mild climate, with sunny days averaging 20°C even in winter, invites endless exploration of baroque fountains and Renaissance art.</p><p>Culturally, Romans embrace <em>la dolce vita</em>, savoring espresso at neighborhood bars and late-night <strong>aperitivi</strong> in Campo de’ Fiori. Nightlife pulses in Testaccio's clubs, where techno mixes with traditional Roman folk, or along the lively Via del Corso. This blend of sacred sites by day and sultry evenings makes Rome an ideal backdrop for indulgent pursuits like <strong>erotic massage</strong>.</p><p>Language barriers fade with Italians' welcoming charm; a simple <em>buonasera</em> opens doors. Amidst this, Rome's culinary scene—from carbonara in Trastevere to supplì street snacks—fuels adventures, ensuring every moment pulses with authentic Mediterranean zest.</p>
+
+<h2>What to Expect</h2>
+<p>At top <strong>erotic massage in Rome</strong> venues, anticipate a warm welcome in elegant, dimly lit spaces adorned with fresco-inspired art. Sessions begin with a private consultation to tailor intensity, often featuring nude or lingerie-clad therapists skilled in Swedish-erotic fusions. Expect 60-90 minute rituals using heated stones or feather-light touches, culminating in full-body release amid Rome's signature olive-scented oils.</p><p>Prices range from €80-€150 for standard sessions, up to €250 for deluxe couples or tantric options, payable in euros cash or card. High-end spots in Parioli or Prati offer extras like prosecco toasts. Etiquette is key: arrive showered, respect boundaries, and tip 10-20% in cash—Romans value discretion and politeness.</p><p>Conversations may mix Italian phrases with English; communicate desires clearly. Post-session, unwind with herbal tea, leaving refreshed amid the city's eternal allure. Always verify licensed venues for safety.</p>`;
+const bottomHtml = `<p>Immerse yourself in Rome's most alluring secret: our curated selection of exactly <strong>3 verified erotic massage listings</strong>, each embodying the city's passionate legacy. From Trastevere's intimate hideaways to Parioli's luxurious retreats, these spots deliver unparalleled sensory bliss tailored for the Eternal City's visitors.</p><p>Whether you're here chasing history or hedonism, an <em>erotic massage in Rome</em> elevates your trip. Book directly through our directory for exclusive deals, ensuring a seamless, discreet experience under Italy's golden sun. Don't miss this fusion of ancient allure and modern ecstasy.</p><p><strong>Ready to surrender to Rome's seductive touch?</strong> Explore our 3 top venues now, reserve your slot, and let the Eternal City awaken your deepest desires. Your Roman indulgence awaits—<em>buon divertimento</em>!</p>`;
+
+// Split listings for different sections
+const premiumListings = listings.filter((l: any) => l.is_premium);
+const goldListings = listings.filter((l: any) => l.is_gold);
+const regularListings = listings.filter((l: any) => !l.is_premium);
+
+// Get top 5 listings for hero slider (Gold first, then Premium)
+const heroListings = [...goldListings, ...premiumListings.filter((l: any) => !l.is_gold), ...regularListings]
+    .filter((l: any) => l.thumbnail)
+    .slice(0, 5);
+---
+
+<Base 
+    title="Best Erotic Massage Rome | Top 3 Spots 2024 Guide"
+    description="Discover the top 3 erotic massage venues in Rome, blending ancient sensuality with modern indulgence. Experience intimate relaxation amid Eternal City&#039;s charm. Book your session now for unforgettable pleasure!"
+    canonical={canonicalUrl}
+    image={heroListings.length > 0 ? heroListings[0].thumbnail : 'https://erotikmaps.com/images/og-default.jpg'}
+>
+    <!-- Compact Hero Section -->
+    <section class="hero-compact">
+        <div class="container">
+            <h1>Unveil Sensual Secrets: Premier Erotic Massage in Rome</h1>
+            <p class="hero-subtitle">{listings.length} verified venues in Rome</p>
+            <div class="hero-badges">
+                {goldListings.length > 0 && <span class="badge-stat gold">⭐ {goldListings.length} Gold</span>}
+                {premiumListings.length > 0 && <span class="badge-stat premium">✨ {premiumListings.length} Premium</span>}
+            </div>
+            <p class="last-updated">📅 Last updated: {new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</p>
+        </div>
+    </section>
+    
+    <!-- Table of Contents - SEO Navigation -->
+    <nav class="toc-section" aria-label="Page contents">
+        <div class="container">
+            <details open>
+                <summary class="toc-title">📑 Quick Navigation</summary>
+                <ul class="toc-list">
+                    <li><a href="#all-listings">🏢 All {listings.length} Venues</a></li>
+                    <li><a href="#about">📖 About Erotic massage</a></li>
+                    <li><a href="#categories">🏷️ Massage Types</a></li>
+                    {faq && faq.length > 0 && <li><a href="#faq">❓ FAQ ({faq.length} questions)</a></li>}
+                    <li><a href="#local-guide">🗺️ Local Guide</a></li>
+                    <li><a href="#pricing">💰 Pricing Guide</a></li>
+                </ul>
+            </details>
+        </div>
+    </nav>
+    
+    <!-- Listings Grid - Mobile First -->
+    <section class="listings" id="all-listings">
+        <div class="container">
+            <div class="listings-grid-3">
+                {listings.map((listing: any) => (
+                    <ListingCard listing={listing} />
+                ))}
+            </div>
+            
+            {listings.length === 0 && (
+                <p class="no-listings">No listings found. Check back soon!</p>
+            )}
+        </div>
+    </section>
+    
+    <!-- About Section -->
+    <section class="about-section" id="about">
+        <div class="container">
+            <h2>About Erotic massage in Rome</h2>
+            <div class="about-content" set:html={introHtml} />
+        </div>
+    </section>
+    
+    <!-- Category Navigation -->
+    <CategoryNav city="Rome" />
+    
+    <!-- Network Links - Links to other satellite sites -->
+    <NetworkLinks currentCity="Rome" currentCountry="Italy" category="erotic-massage" />
+    
+    <!-- Internal Links Section -->
+    <InternalLinks city="Rome" country="Italy" category="Erotic massage" />
+    
+    <!-- Owner CTA Section - Encourage venue owners to create listings -->
+    <OwnerCTA city="Rome" country="Italy" category="Erotic massage" />
+    
+    <!-- FAQ Section -->
+    {faq && faq.length > 0 && (
+        <section class="faq" id="faq">
+            <div class="container">
+                <h2>Frequently Asked Questions about Erotic massage in Rome</h2>
+                <div class="faq-list">
+                    {faq.map((item: any, index: number) => (
+                        <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+                            <h3 itemprop="name">{item.question}</h3>
+                            <div itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+                                <div itemprop="text" set:html={item.answer} />
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        </section>
+    )}
+    
+    <!-- Local Guide Section - Unique SEO Content -->
+    <section class="local-guide" id="local-guide">
+        <div class="container">
+            <h2>🗺️ Erotic massage Guide for Rome</h2>
+            <div class="guide-grid">
+                <div class="guide-card">
+                    <h3>🏙️ Best Areas</h3>
+                    <p>Find Erotic massage venues throughout Rome, from the city center to quieter neighborhoods. Each area offers unique experiences and atmospheres.</p>
+                </div>
+                <div class="guide-card">
+                    <h3>⏰ Best Times to Visit</h3>
+                    <p>Most Erotic massage establishments in Rome operate from late morning until late evening. We recommend booking in advance, especially on weekends.</p>
+                </div>
+                <div class="guide-card">
+                    <h3>💳 Payment Methods</h3>
+                    <p>Venues in Rome typically accept cash and cards. Some premium establishments may offer discreet billing options. Always confirm payment methods when booking.</p>
+                </div>
+                <div class="guide-card">
+                    <h3>🌐 Language</h3>
+                    <p>Many Erotic massage venues in Rome have English-speaking staff. For the best experience, you can use translation apps or contact venues via WhatsApp.</p>
+                </div>
+            </div>
+            <div class="guide-tips">
+                <h3>💡 Tips for First-Time Visitors</h3>
+                <ul>
+                    <li>✓ Always verify the venue is still operating by contacting them directly</li>
+                    <li>✓ Read our listings carefully for services offered and pricing ranges</li>
+                    <li>✓ Look for Gold and Premium badges for verified quality establishments</li>
+                    <li>✓ Book in advance during peak hours (evenings and weekends)</li>
+                    <li>✓ Respect the venue's rules and staff at all times</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Pricing Guide Section -->
+    <section class="pricing-guide" id="pricing">
+        <div class="container">
+            <h2>💰 Erotic massage Pricing in Rome</h2>
+            <p class="pricing-intro">Prices for Erotic massage services in Rome vary based on the venue, services, and duration. Here's a general guide:</p>
+            <div class="pricing-table">
+                <div class="price-tier">
+                    <span class="tier-label">Budget</span>
+                    <span class="tier-range">💵 Lower price range</span>
+                    <p>Basic services at smaller venues. Good for first-time visitors.</p>
+                </div>
+                <div class="price-tier featured">
+                    <span class="tier-label">⭐ Mid-Range</span>
+                    <span class="tier-range">💵💵 Average prices</span>
+                    <p>Quality service at established venues. Most popular choice.</p>
+                </div>
+                <div class="price-tier">
+                    <span class="tier-label">✨ Premium</span>
+                    <span class="tier-range">💵💵💵 Higher prices</span>
+                    <p>Luxury experiences at top-rated Gold establishments.</p>
+                </div>
+            </div>
+            <p class="pricing-note">💡 <strong>Tip:</strong> Contact venues directly for exact pricing. Prices may vary based on services and session duration.</p>
+        </div>
+    </section>
+    
+    <!-- Bottom Section / Call to Action -->
+    <section class="bottom-content">
+        <div class="container">
+            <h2>Find Your Perfect Erotic massage Experience in Rome</h2>
+            <div class="bottom-content-text" set:html={bottomHtml} />
+            
+            <div class="cta-box">
+                <h3>Looking for something specific?</h3>
+                <p>Browse through our {listings.length} listings above, or click on any venue to see full details, photos, and contact information.</p>
+                <a href="#all-listings" class="btn-primary">Browse All Listings</a>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Individual Listing Links for SEO -->
+    <section class="sitemap-links">
+        <div class="container">
+            <h2>All Erotic massage Venues</h2>
+            <ul class="venue-links">
+                {listings.map((listing: any) => (
+                    <li><a href={`/${listing.slug}`}>{listing.name} - Rome</a></li>
+                ))}
+            </ul>
+        </div>
+    </section>
+    
+    <!-- Schema.org - ItemList -->
+    <script type="application/ld+json" set:html={JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "ItemList",
+        "name": "Best Erotic Massage Rome | Top 3 Spots 2024 Guide",
+        "description": "Discover the top 3 erotic massage venues in Rome, blending ancient sensuality with modern indulgence. Experience intimate relaxation amid Eternal City&#039;s charm. Book your session now for unforgettable pleasure!",
+        "url": canonicalUrl,
+        "numberOfItems": listings.length,
+        "itemListElement": listings.map((listing: any, index: number) => ({
+            "@type": "ListItem",
+            "position": index + 1,
+            "item": {
+                "@type": "LocalBusiness",
+                "name": listing.name,
+                "url": `https://eroticmassagerome.com/${listing.slug}`,
+                "image": listing.thumbnail,
+                "address": {
+                    "@type": "PostalAddress",
+                    "addressLocality": "Rome",
+                    "addressCountry": "Italy"
+                }
+            }
+        }))
+    })}></script>
+    
+    <!-- Schema.org - FAQPage -->
+    {faq && faq.length > 0 && (
+        <script type="application/ld+json" set:html={JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            "mainEntity": faq.map((item: any) => ({
+                "@type": "Question",
+                "name": item.question,
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": item.answer
+                }
+            }))
+        })}></script>
+    )}
+    
+    <!-- Schema.org - WebPage -->
+    <script type="application/ld+json" set:html={JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "WebPage",
+        "name": "Best Erotic Massage Rome | Top 3 Spots 2024 Guide",
+        "description": "Discover the top 3 erotic massage venues in Rome, blending ancient sensuality with modern indulgence. Experience intimate relaxation amid Eternal City&#039;s charm. Book your session now for unforgettable pleasure!",
+        "url": canonicalUrl,
+        "isPartOf": {
+            "@type": "WebSite",
+            "name": "Rome Erotic Massage 🏛️",
+            "url": "https://eroticmassagerome.com"
+        },
+        "about": {
+            "@type": "Thing",
+            "name": "Erotic massage in Rome"
+        },
+        "breadcrumb": {
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+                {
+                    "@type": "ListItem",
+                    "position": 1,
+                    "name": "Home",
+                    "item": "https://eroticmassagerome.com"
+                }
+            ]
+        }
+    })}></script>
+</Base>
+
+<style>
+    /* Compact Hero */
+    .hero-compact {
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        color: white;
+        padding: 30px 0;
+        text-align: center;
+    }
+    .hero-compact h1 {
+        font-size: clamp(1.4rem, 4vw, 2rem);
+        margin-bottom: 8px;
+        font-weight: 700;
+    }
+    .hero-compact .hero-subtitle {
+        font-size: 0.95rem;
+        opacity: 0.9;
+        margin-bottom: 12px;
+    }
+    .hero-badges {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+    .badge-stat {
+        background: rgba(255,255,255,0.2);
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+    .badge-stat.gold { background: rgba(255,215,0,0.3); }
+    .badge-stat.premium { background: rgba(255,255,255,0.25); }
+    .last-updated {
+        font-size: 0.8rem;
+        opacity: 0.7;
+        margin-top: 12px;
+    }
+    
+    /* Table of Contents */
+    .toc-section {
+        background: var(--card-bg);
+        padding: 20px 0;
+        border-bottom: 1px solid var(--border);
+    }
+    .toc-title {
+        font-weight: 600;
+        font-size: 0.95rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .toc-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px 24px;
+        list-style: none;
+        padding: 16px 0 0;
+        margin: 0;
+    }
+    .toc-list li a {
+        font-size: 0.9rem;
+        color: var(--text);
+        text-decoration: none;
+        padding: 6px 12px;
+        background: var(--bg);
+        border-radius: 20px;
+        transition: all 0.2s ease;
+    }
+    .toc-list li a:hover {
+        background: var(--primary);
+        color: white;
+        text-decoration: none;
+    }
+    @media (max-width: 600px) {
+        .toc-list { flex-direction: column; gap: 8px; }
+        .toc-list li a { display: block; text-align: center; }
+    }
+    
+    /* Local Guide Section */
+    .local-guide {
+        padding: 60px 0;
+        background: var(--card-bg);
+    }
+    .local-guide h2 {
+        text-align: center;
+        margin-bottom: 40px;
+    }
+    .guide-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 20px;
+        margin-bottom: 40px;
+    }
+    .guide-card {
+        background: var(--bg);
+        padding: 24px;
+        border-radius: 16px;
+    }
+    .guide-card h3 {
+        font-size: 1rem;
+        margin-bottom: 10px;
+        color: var(--text);
+    }
+    .guide-card p {
+        font-size: 0.9rem;
+        color: var(--text-light);
+        line-height: 1.6;
+    }
+    .guide-tips {
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        padding: 30px;
+        border-radius: 16px;
+        color: white;
+    }
+    .guide-tips h3 {
+        margin-bottom: 16px;
+    }
+    .guide-tips ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+    .guide-tips li {
+        padding: 8px 0;
+        font-size: 0.95rem;
+        opacity: 0.95;
+    }
+    @media (max-width: 900px) {
+        .guide-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 500px) {
+        .guide-grid { grid-template-columns: 1fr; }
+    }
+    
+    /* Pricing Guide Section */
+    .pricing-guide {
+        padding: 60px 0;
+    }
+    .pricing-guide h2 {
+        text-align: center;
+        margin-bottom: 16px;
+    }
+    .pricing-intro {
+        text-align: center;
+        color: var(--text-light);
+        margin-bottom: 40px;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .pricing-table {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+    .price-tier {
+        background: var(--card-bg);
+        padding: 30px 24px;
+        border-radius: 16px;
+        text-align: center;
+        border: 2px solid var(--border);
+    }
+    .price-tier.featured {
+        border-color: var(--primary);
+        transform: scale(1.05);
+        box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+    }
+    .tier-label {
+        display: block;
+        font-weight: 700;
+        font-size: 1.1rem;
+        margin-bottom: 8px;
+        color: var(--text);
+    }
+    .tier-range {
+        display: block;
+        font-size: 1.2rem;
+        margin-bottom: 12px;
+    }
+    .price-tier p {
+        font-size: 0.9rem;
+        color: var(--text-light);
+        line-height: 1.5;
+    }
+    .pricing-note {
+        text-align: center;
+        font-size: 0.9rem;
+        color: var(--text-light);
+        background: var(--bg);
+        padding: 16px;
+        border-radius: 8px;
+    }
+    @media (max-width: 768px) {
+        .pricing-table { grid-template-columns: 1fr; }
+        .price-tier.featured { transform: none; }
+    }
+    
+    /* Listings Grid - Mobile First (1 col mobile, 2 tablet, 3 desktop) */
+    .listings-grid-3 {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+    @media (min-width: 540px) {
+        .listings-grid-3 { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (min-width: 900px) {
+        .listings-grid-3 { grid-template-columns: repeat(3, 1fr); }
+    }
+    
+    /* About Section */
+    .about-section {
+        background: var(--card-bg);
+        padding: 40px 0;
+    }
+    .about-section h2 {
+        font-size: 1.4rem;
+        margin-bottom: 16px;
+    }
+    .about-content {
+        color: var(--text-light);
+        line-height: 1.7;
+    }
+    .about-content p { margin-bottom: 12px; }
+    
+    /* Listings Section */
+    .listings {
+        padding: 24px 0;
+    }
+    
+    .section-intro {
+        color: var(--text-light);
+        margin-bottom: 25px;
+    }
+    .premium-section {
+        background: linear-gradient(135deg, #D4AF3710, #F4D03F10);
+    }
+    .cta-box {
+        background: linear-gradient(135deg, var(--primary)10, var(--secondary)10);
+        padding: 30px;
+        border-radius: 12px;
+        margin-top: 30px;
+        text-align: center;
+    }
+    .cta-box h3 {
+        margin-bottom: 10px;
+    }
+    .cta-box p {
+        margin-bottom: 20px;
+        color: var(--text-light);
+    }
+    .sitemap-links {
+        padding: 40px 0;
+        background: var(--bg);
+    }
+    .sitemap-links h2 {
+        font-size: 1.2rem;
+        margin-bottom: 20px;
+    }
+    .venue-links {
+        column-count: 3;
+        column-gap: 30px;
+        list-style: none;
+        padding: 0;
+    }
+    .venue-links li {
+        margin-bottom: 8px;
+        break-inside: avoid;
+    }
+    .venue-links a {
+        font-size: 13px;
+        color: var(--text-light);
+    }
+    .venue-links a:hover {
+        color: var(--primary);
+    }
+    @media (max-width: 768px) {
+        .venue-links {
+            column-count: 1;
+        }
+    }
+</style>

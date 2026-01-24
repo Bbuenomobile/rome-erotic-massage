@@ -1,0 +1,16 @@
+{
+    "name": "Rome Erotic massage",
+    "short_name": "Rome Erotic Massage \ud83c\udfdb\ufe0f",
+    "description": "Discover the top 3 erotic massage venues in Rome, blending ancient sensuality with modern indulgence. Experience intimate relaxation amid Eternal City's charm. Book your session now for unforgettable pleasure!",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#795548",
+    "icons": [
+        {
+            "src": "/favicon.svg",
+            "sizes": "any",
+            "type": "image/svg+xml"
+        }
+    ]
+}
