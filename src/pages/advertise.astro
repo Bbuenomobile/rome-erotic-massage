@@ -2,19 +2,29 @@
 import Base from '../layouts/Base.astro';
 
 const canonicalUrl = 'https://eroticmassagerome.com/advertise';
+
+// Fetch listing count for honest stats
+let venueCount = 0;
+try {
+    const res = await fetch('https://www.erotikmaps.com/api/v1/satellite/listings?city=rome&category=erotic-massage&limit=1');
+    if (res.ok) {
+        const d = await res.json();
+        venueCount = d.pagination?.total || (d.data ? d.data.length : 0);
+    }
+} catch (e) {}
 ---
 
 <Base 
-    title="Advertise Your Erotic massage Venue in Rome | Get More Clients"
-    description="Promote your erotic massage salon, spa or wellness center in Rome. Reach thousands of potential clients monthly. Free listing available. Premium options for maximum visibility."
+    title="Advertise Your Erotic Massage Venue in Rome | Get More Clients"
+    description="Promote your Erotic Massage in Rome. Reach potential clients through organic search. Free listing available. Silver and Gold options for maximum visibility."
     canonical={canonicalUrl}
 >
     <div class="b2b-page">
         <section class="b2b-hero">
             <div class="container">
                 <span class="hero-badge">🚀 For Business Owners</span>
-                <h1>Grow Your Erotic massage Business in Rome</h1>
-                <p class="hero-subtitle">Join Rome's premier directory and reach thousands of potential clients every month</p>
+                <h1>Grow Your Erotic Massage Business in Rome</h1>
+                <p class="hero-subtitle">List your Erotic Massage venue in Rome's growing directory and reach clients through organic search</p>
                 <div class="hero-ctas">
                     <a href="https://gopremium.app/create-listing" class="btn-primary-large">
                         ✨ Create Free Listing
@@ -30,20 +40,20 @@ const canonicalUrl = 'https://eroticmassagerome.com/advertise';
             <div class="container">
                 <div class="stats-grid">
                     <div class="stat-card">
-                        <span class="stat-number">10,000+</span>
-                        <span class="stat-label">Monthly Visitors</span>
+                        <span class="stat-number">{venueCount > 0 ? venueCount + '+' : 'New'}</span>
+                        <span class="stat-label">Venues Listed in Rome</span>
                     </div>
                     <div class="stat-card">
-                        <span class="stat-number">85%</span>
-                        <span class="stat-label">Mobile Users</span>
+                        <span class="stat-number">Free</span>
+                        <span class="stat-label">Basic Listing</span>
                     </div>
                     <div class="stat-card">
                         <span class="stat-number">24/7</span>
                         <span class="stat-label">Online Visibility</span>
                     </div>
                     <div class="stat-card">
-                        <span class="stat-number">#1</span>
-                        <span class="stat-label">Local SEO Ranking</span>
+                        <span class="stat-number">0%</span>
+                        <span class="stat-label">Commission on Bookings</span>
                     </div>
                 </div>
             </div>
@@ -56,17 +66,17 @@ const canonicalUrl = 'https://eroticmassagerome.com/advertise';
                     <div class="benefit-card">
                         <span class="benefit-icon">🎯</span>
                         <h3>Targeted Traffic</h3>
-                        <p>Our visitors are actively searching for Erotic massage services in Rome. High-intent traffic that converts.</p>
+                        <p>Our visitors are searching for Erotic Massage services in Rome — relevant, high-intent organic traffic.</p>
                     </div>
                     <div class="benefit-card">
                         <span class="benefit-icon">📱</span>
                         <h3>Mobile Optimized</h3>
-                        <p>85% of our traffic comes from mobile devices. Your listing looks perfect on any screen.</p>
+                        <p>Our site is fully responsive. Your listing looks perfect on phones, tablets, and desktops.</p>
                     </div>
                     <div class="benefit-card">
                         <span class="benefit-icon">🔍</span>
                         <h3>SEO Boost</h3>
-                        <p>We rank on Google for "Erotic massage Rome" and related keywords. Benefit from our domain authority.</p>
+                        <p>This directory is built with SEO best practices. As it grows in authority, your listing gains organic visibility for "Erotic Massage Rome" searches.</p>
                     </div>
                     <div class="benefit-card">
                         <span class="benefit-icon">📞</span>
@@ -80,8 +90,8 @@ const canonicalUrl = 'https://eroticmassagerome.com/advertise';
                     </div>
                     <div class="benefit-card">
                         <span class="benefit-icon">⭐</span>
-                        <h3>Premium Placement</h3>
-                        <p>Gold members appear first in search results and get a special badge. Stand out from competitors.</p>
+                        <h3>Priority Placement</h3>
+                        <p>Gold and Silver members appear first in search results and get a special badge. Stand out from competitors.</p>
                     </div>
                 </div>
             </div>
@@ -110,18 +120,18 @@ const canonicalUrl = 'https://eroticmassagerome.com/advertise';
                     <div class="pricing-card featured">
                         <div class="popular-badge">Most Popular</div>
                         <div class="pricing-header">
-                            <h3>Premium</h3>
+                            <h3>Silver</h3>
                             <p class="price"><span class="currency">€</span>29<span class="period">/month</span></p>
                         </div>
                         <ul class="pricing-features">
                             <li>✓ Everything in Free</li>
                             <li>✓ Up to 15 photos</li>
                             <li>✓ Priority in search</li>
-                            <li>✓ Premium badge</li>
+                            <li>✓ Silver badge</li>
                             <li>✓ Detailed analytics</li>
                             <li class="disabled">✗ Gold badge</li>
                         </ul>
-                        <a href="https://gopremium.app/create-listing" class="pricing-cta featured">Go Premium</a>
+                        <a href="https://gopremium.app/create-listing" class="pricing-cta featured">Go Silver</a>
                     </div>
                     <div class="pricing-card gold">
                         <div class="gold-badge">⭐ Best Value</div>
@@ -130,7 +140,7 @@ const canonicalUrl = 'https://eroticmassagerome.com/advertise';
                             <p class="price"><span class="currency">€</span>79<span class="period">/month</span></p>
                         </div>
                         <ul class="pricing-features">
-                            <li>✓ Everything in Premium</li>
+                            <li>✓ Everything in Silver</li>
                             <li>✓ Unlimited photos & videos</li>
                             <li>✓ #1 placement in city</li>
                             <li>✓ Exclusive Gold badge</li>
@@ -143,23 +153,29 @@ const canonicalUrl = 'https://eroticmassagerome.com/advertise';
             </div>
         </section>
         
-        <section class="b2b-testimonials">
+        <section class="b2b-why-us">
             <div class="container">
-                <h2>What Our Partners Say</h2>
-                <div class="testimonials-grid">
-                    <div class="testimonial-card">
-                        <p class="testimonial-text">"Since listing on this directory, our bookings have increased by 40%. The quality of clients is excellent."</p>
-                        <div class="testimonial-author">
-                            <span class="author-name">Massage Venue Owner</span>
-                            <span class="author-location">Rome</span>
-                        </div>
+                <h2>Why Venue Owners Choose Our Directory</h2>
+                <div class="why-grid">
+                    <div class="why-card">
+                        <span class="why-icon">🌍</span>
+                        <h3>Part of the ErotikMaps Network</h3>
+                        <p>Your listing benefits from the authority and traffic of the ErotikMaps international network — spanning hundreds of cities across multiple continents.</p>
                     </div>
-                    <div class="testimonial-card">
-                        <p class="testimonial-text">"The Gold membership pays for itself within the first week. Highly recommend for serious businesses."</p>
-                        <div class="testimonial-author">
-                            <span class="author-name">Spa Manager</span>
-                            <span class="author-location">Italy</span>
-                        </div>
+                    <div class="why-card">
+                        <span class="why-icon">🚫</span>
+                        <h3>No Censorship</h3>
+                        <p>Unlike Google My Business and social media platforms that frequently censor or ban adult businesses, our directory is built specifically for your industry.</p>
+                    </div>
+                    <div class="why-card">
+                        <span class="why-icon">💰</span>
+                        <h3>No Commission</h3>
+                        <p>We never take a percentage of your bookings. Clients contact you directly and every euro they spend goes to you.</p>
+                    </div>
+                    <div class="why-card">
+                        <span class="why-icon">📈</span>
+                        <h3>Growing Traffic</h3>
+                        <p>We invest in SEO so you don't have to. As our Rome directory grows in search rankings, your listing gets more exposure automatically.</p>
                     </div>
                 </div>
             </div>
@@ -183,7 +199,7 @@ const canonicalUrl = 'https://eroticmassagerome.com/advertise';
                     </div>
                     <div class="faq-item">
                         <h3>How long until my listing appears?</h3>
-                        <p>Free listings are approved within 24-48 hours. Premium and Gold listings are prioritized and usually live within a few hours.</p>
+                        <p>Free listings are approved within 24-48 hours. Silver and Gold listings are prioritized and usually live within a few hours.</p>
                     </div>
                 </div>
             </div>
@@ -192,7 +208,7 @@ const canonicalUrl = 'https://eroticmassagerome.com/advertise';
         <section class="b2b-cta-final">
             <div class="container">
                 <h2>Ready to Grow Your Business?</h2>
-                <p>Join hundreds of successful Erotic massage venues in Rome</p>
+                <p>Join hundreds of successful Erotic Massage venues in Rome</p>
                 <a href="https://gopremium.app/create-listing" class="btn-primary-large">
                     🚀 Create Your Listing Now
                 </a>
@@ -446,32 +462,45 @@ const canonicalUrl = 'https://eroticmassagerome.com/advertise';
         background: #c5a028;
     }
     
-    .b2b-testimonials {
+    .b2b-why-us {
         padding: 80px 0;
     }
-    .b2b-testimonials h2 {
+    .b2b-why-us h2 {
         text-align: center;
         font-size: 2rem;
         margin-bottom: 50px;
     }
-    .testimonials-grid {
+    .why-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
         gap: 30px;
-        max-width: 800px;
-        margin: 0 auto;
     }
-    .testimonial-card {
+    .why-card {
         background: var(--card-bg);
         padding: 30px;
         border-radius: 16px;
         box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+        text-align: center;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
-    .testimonial-text {
-        font-size: 1rem;
-        line-height: 1.7;
-        margin-bottom: 20px;
-        font-style: italic;
+    .why-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+    }
+    .why-icon {
+        font-size: 2.5rem;
+        display: block;
+        margin-bottom: 16px;
+    }
+    .why-card h3 {
+        font-size: 1.15rem;
+        margin-bottom: 12px;
+        color: var(--text);
+    }
+    .why-card p {
+        font-size: 0.95rem;
+        line-height: 1.6;
+        color: var(--text-light);
     }
     .author-name {
         font-weight: 600;
@@ -536,7 +565,7 @@ const canonicalUrl = 'https://eroticmassagerome.com/advertise';
     
     @media (max-width: 768px) {
         .b2b-hero { padding: 50px 0; }
-        .b2b-benefits, .b2b-pricing, .b2b-testimonials, .b2b-faq { padding: 50px 0; }
+        .b2b-benefits, .b2b-pricing, .b2b-why-us, .b2b-faq { padding: 50px 0; }
         .pricing-grid { grid-template-columns: 1fr; }
     }
 </style>

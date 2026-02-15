@@ -5,6 +5,7 @@ import CategoryNav from '../components/CategoryNav.astro';
 import InternalLinks from '../components/InternalLinks.astro';
 import OwnerCTA from '../components/OwnerCTA.astro';
 import NetworkLinks from '../components/NetworkLinks.astro';
+import GeoBanner from '../components/GeoBanner.astro';
 
 // Safe fetch helper for fake category pages
 async function safeFetch(url: string): Promise<any[]> {
@@ -32,18 +33,32 @@ async function safeFetch(url: string): Promise<any[]> {
 const apiUrl = 'https://www.erotikmaps.com/api/v1/satellite/listings?city=rome&category=lingam-massage&limit=50';
 let listings = await safeFetch(apiUrl);
 
-// If no specific listings, fallback to main erotic-massage listings
+// If no specific listings, fallback to main category in city
 if (listings.length === 0) {
     const fallbackUrl = 'https://www.erotikmaps.com/api/v1/satellite/listings?city=rome&category=erotic-massage&limit=30';
     listings = await safeFetch(fallbackUrl);
 }
 
+// If still no listings, fallback to country (Gold + premium + 20 others)
+if (listings.length === 0) {
+    const countryUrl = 'https://www.erotikmaps.com/api/v1/satellite/listings?country=italy&category=erotic-massage&limit=200';
+    const allCountryListings = await safeFetch(countryUrl);
+    if (allCountryListings.length > 0) {
+        const goldOnes = allCountryListings.filter((l: any) => l.is_gold);
+        const premiumOnes = allCountryListings.filter((l: any) => l.is_premium && !l.is_gold);
+        const others = allCountryListings.filter((l: any) => !l.is_premium && !l.is_gold);
+        const selected = others.sort((a: any, b: any) => (a.id || 0) - (b.id || 0)).slice(0, 20);
+        listings = [...goldOnes, ...premiumOnes, ...selected];
+    }
+}
+
 const canonicalUrl = 'https://eroticmassagerome.com/lingam-massage';
+const buildDate = new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
 ---
 
 <Base 
-    title="🧘 Lingam Massage in Rome | Best Lingam Massage Venues 2026"
-    description="Discover the finest Lingam Massage venues in Rome, Italy. Browse verified listings with photos, reviews & contact info. Find Lingam Massage near you!"
+    title="Lingam Massage in Rome — Tantric Practitioners 2026"
+    description="Experience lingam massage in Rome. A tantric practice honoring masculine energy. Find verified practitioners in Italy."
     canonical={canonicalUrl}
     image={listings.length > 0 && listings[0].thumbnail ? listings[0].thumbnail : 'https://erotikmaps.com/images/og-default.jpg'}
 >
@@ -55,57 +70,46 @@ const canonicalUrl = 'https://eroticmassagerome.com/lingam-massage';
             <p class="hero-subtitle">
                 {listings.length > 0 
                     ? `Discover ${listings.length} verified Lingam Massage venues in Rome` 
-                    : `Explore Lingam Massage experiences in Rome`
+                    : `Find Lingam Massage options in Rome, Italy`
                 }
             </p>
+            <p class="last-updated-hero">Updated {buildDate}</p>
         </div>
     </section>
     
-    <!-- Category Navigation - Internal Links to other massage types -->
-    <CategoryNav city="Rome" currentCategory="lingam-massage" />
+    <!-- Category Navigation - Internal Links to other sub-types -->
+    <CategoryNav city="Rome" currentCategory="lingam-massage" mainCategory="erotic-massage" />
     
-    <!-- Intro Content - Rich SEO Content -->
+    <!-- Intro Content - UNIQUE per sub-category -->
     <section class="intro">
         <div class="container">
             <h2>About Lingam Massage in Rome</h2>
-            <p>
-                Looking for authentic <strong>Lingam Massage</strong> experiences in Rome? 
-                Our curated directory features the best Lingam Massage venues in the Rome area. 
-                Whether you're a local or visiting Italy, we help you discover quality 
-                Lingam Massage services with verified listings, photos, and direct contact information.
-            </p>
-            <p>
-                Lingam Massage is known for its unique techniques and relaxing atmosphere. 
-                In Rome, you'll find a variety of establishments offering authentic 
-                Lingam Massage experiences, from traditional venues to modern wellness centers.
-            </p>
+            <p>Lingam massage is a tantric practice that focuses on the male body, particularly the pelvic area. The word "Lingam" comes from Sanskrit and represents masculine creative energy. In Rome, trained practitioners offer this service as part of a broader tantric bodywork session.</p>
+            <p>Unlike a purely physical service, lingam massage in Rome incorporates breathwork, energy channeling, and full-body relaxation before focusing on the lingam area. It is considered a healing practice within the tantric tradition.</p>
         </div>
     </section>
     
-    <!-- What to Expect - Unique content per category -->
+    <!-- What to Expect - UNIQUE content per sub-category -->
     <section class="what-to-expect">
         <div class="container">
             <h2>What to Expect from Lingam Massage in Rome</h2>
             <div class="expect-grid">
-                <div class="expect-card">
-                    <span class="expect-icon">🏢</span>
-                    <h3>Professional Venues</h3>
-                    <p>All listed Lingam Massage establishments in Rome are verified for authenticity and professionalism.</p>
-                </div>
-                <div class="expect-card">
-                    <span class="expect-icon">🔒</span>
-                    <h3>Privacy & Discretion</h3>
-                    <p>Lingam Massage venues in Rome prioritize client privacy with discreet locations and confidential services.</p>
-                </div>
-                <div class="expect-card">
-                    <span class="expect-icon">💯</span>
-                    <h3>Quality Service</h3>
-                    <p>Expect trained professionals who specialize in Lingam Massage techniques for the ultimate relaxation experience.</p>
-                </div>
-                <div class="expect-card">
-                    <span class="expect-icon">📍</span>
-                    <h3>Convenient Locations</h3>
-                    <p>Find Lingam Massage venues across Rome, from central areas to quieter neighborhoods.</p>
+                                <div class="expect-card">
+                    <span class="expect-icon">🧘</span>
+                    <h3>Tantric Foundation</h3>
+                    <p>Lingam massage in Rome is rooted in tantric philosophy — sessions begin with breathwork and full-body relaxation.</p>
+                </div>                <div class="expect-card">
+                    <span class="expect-icon">🌊</span>
+                    <h3>Energy-Based Approach</h3>
+                    <p>The focus is on moving energy through the body, using the lingam as a center point for energetic release and balance.</p>
+                </div>                <div class="expect-card">
+                    <span class="expect-icon">⏰</span>
+                    <h3>Extended Duration</h3>
+                    <p>Sessions typically last 90 minutes to 2 hours, as the practice requires gradual preparation and energy building.</p>
+                </div>                <div class="expect-card">
+                    <span class="expect-icon">🫁</span>
+                    <h3>Breathwork Included</h3>
+                    <p>Controlled breathing is integral — practitioners guide you through specific patterns to deepen the experience.</p>
                 </div>
             </div>
         </div>
@@ -117,19 +121,19 @@ const canonicalUrl = 'https://eroticmassagerome.com/lingam-massage';
             <h2>How to Choose the Best Lingam Massage in Rome</h2>
             <ol class="choose-steps">
                 <li>
-                    <strong>Browse our verified listings</strong> - All Lingam Massage venues on our directory have been reviewed for authenticity.
+                    <strong>Browse our verified listings</strong> — All Lingam Massage venues in our Rome directory have been reviewed for authenticity.
                 </li>
                 <li>
-                    <strong>Check photos and services</strong> - Each listing includes photos, service descriptions, and contact details.
+                    <strong>Compare photos and services</strong> — Each listing includes a gallery, service details, and direct contact info.
                 </li>
                 <li>
-                    <strong>Look for Gold/Premium badges</strong> - These indicate venues that have been verified for exceptional quality.
+                    <strong>Look for Gold and Silver badges</strong>, these indicate listings verified for exceptional quality and service.
                 </li>
                 <li>
-                    <strong>Contact directly</strong> - Use WhatsApp, phone, or email to inquire about availability and pricing.
+                    <strong>Contact directly via WhatsApp or phone</strong> — No middleman. Ask about availability, pricing, and special offers.
                 </li>
                 <li>
-                    <strong>Read the FAQ section</strong> - Common questions about Lingam Massage in Rome are answered below.
+                    <strong>Check the FAQ below</strong> — We answer common questions about Lingam Massage in Rome.
                 </li>
             </ol>
         </div>
@@ -162,51 +166,61 @@ const canonicalUrl = 'https://eroticmassagerome.com/lingam-massage';
         </div>
     </section>
     
-    <!-- Auto-generated FAQ for Category Pages -->
-    <section class="category-faq" id="faq">
+    <!-- GeoBanner for category pages -->
+    <div class="category-banner-slot">
         <div class="container">
-            <h2>❓ Frequently Asked Questions about Lingam Massage in Rome</h2>
+            <GeoBanner />
+        </div>
+    </div>
+    
+    <!-- FAQ Section - UNIQUE per sub-category with FAQPage Schema -->
+    <section class="category-faq" id="faq" itemscope itemtype="https://schema.org/FAQPage">
+        <div class="container">
+            <h2><span class="heading-icon" aria-hidden="true">❓</span> Lingam Massage in Rome — FAQ</h2>
             <div class="faq-grid">
-                <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
-                    <h3 itemprop="name">What is Lingam Massage?</h3>
+                                <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+                    <h3 itemprop="name">What is lingam massage exactly?</h3>
                     <div itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-                        <p itemprop="text">Lingam Massage is a specialized form of massage that focuses on relaxation and wellness. In Rome, you can find various establishments offering authentic Lingam Massage experiences with trained professionals.</p>
+                        <p itemprop="text">Lingam massage is a tantric practice focusing on the male pelvic area. It combines full-body massage with breathwork and energy channeling, treating the lingam (penis) as a center of creative energy. It is part of a broader tantric session, not an isolated service.</p>
                     </div>
-                </div>
-                <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
-                    <h3 itemprop="name">How much does Lingam Massage cost in Rome?</h3>
+                </div>                <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+                    <h3 itemprop="name">Is lingam massage only for men?</h3>
                     <div itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-                        <p itemprop="text">Prices for Lingam Massage in Rome vary depending on the venue and services. We recommend contacting individual venues directly for current pricing. Look for Gold and Premium listings for verified quality establishments.</p>
+                        <p itemprop="text">Yes, lingam massage is specifically designed for the male body. The female equivalent in tantra is called yoni massage. Some practitioners in Rome offer both.</p>
                     </div>
-                </div>
-                <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
-                    <h3 itemprop="name">How do I book a Lingam Massage session in Rome?</h3>
+                </div>                <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+                    <h3 itemprop="name">What is the difference between lingam massage and a regular happy ending?</h3>
                     <div itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-                        <p itemprop="text">Browse our directory of Lingam Massage venues in Rome, select a venue that interests you, and contact them directly via WhatsApp, phone, or email. Most venues accept walk-ins but booking in advance is recommended.</p>
+                        <p itemprop="text">Lingam massage is a tantric practice with a spiritual and energetic foundation. It involves breathwork, extended full-body massage, and energy channeling. A happy ending is a more direct, physically-focused service. The experience and intention are quite different.</p>
                     </div>
-                </div>
-                <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
-                    <h3 itemprop="name">Are the Lingam Massage venues in Rome verified?</h3>
+                </div>                <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+                    <h3 itemprop="name">How should I prepare for a lingam massage?</h3>
                     <div itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-                        <p itemprop="text">All venues listed on our directory have been reviewed for authenticity. Gold badge venues have been verified for exceptional quality, while Premium listings indicate verified professional establishments.</p>
+                        <p itemprop="text">Arrive clean, well-hydrated, and with an open mind. Avoid alcohol before the session. Some practitioners recommend light fasting. Most importantly, be willing to follow the practitioner's guidance on breathing and relaxation.</p>
+                    </div>
+                </div>                <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+                    <h3 itemprop="name">What qualifications do lingam massage practitioners have?</h3>
+                    <div itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+                        <p itemprop="text">Qualified practitioners in Rome typically have training in tantric bodywork, anatomy, and energy healing. Check practitioner profiles on our listings for information about their background and certifications.</p>
                     </div>
                 </div>
             </div>
         </div>
     </section>
     
-    <!-- Related Categories - Smart Internal Links -->
+    <!-- Related Categories - DYNAMIC based on actual main category -->
     <section class="related-cats">
         <div class="container">
-            <h2>Explore Other Massage Types in Rome</h2>
+            <h2>More Erotic Massage Types in Rome</h2>
             <div class="related-grid">
                 <a href="/" class="related-link main">🏠 All Erotic Massage</a>
                 <a href="/nuru-massage" class="related-link">💆 Nuru Massage</a>
                 <a href="/tantric-massage" class="related-link">🕉️ Tantric Massage</a>
-                <a href="/body-to-body-massage" class="related-link">✨ Body to Body</a>
+                <a href="/body-to-body-massage" class="related-link">✨ Body to Body Massage</a>
                 <a href="/sensual-massage" class="related-link">💕 Sensual Massage</a>
-                <a href="/happy-ending-massage" class="related-link">😊 Happy Ending</a>
+                <a href="/happy-ending-massage" class="related-link">😊 Happy Ending Massage</a>
                 <a href="/adult-massage" class="related-link">🔞 Adult Massage</a>
+                
             </div>
             <p class="more-link">
                 Discover more <a href="https://erotikmaps.com/lingam-massage" title="Lingam Massage worldwide">Lingam Massage venues worldwide</a> on ErotikMaps
@@ -223,13 +237,14 @@ const canonicalUrl = 'https://eroticmassagerome.com/lingam-massage';
     <!-- Owner CTA -->
     <OwnerCTA city="Rome" country="Italy" category="Lingam Massage" />
     
-    <!-- Schema.org -->
+    <!-- Schema.org - CollectionPage + FAQPage -->
     <script type="application/ld+json" set:html={JSON.stringify({
         "@context": "https://schema.org",
         "@type": "CollectionPage",
         "name": "Lingam Massage in Rome",
-        "description": "Directory of Lingam Massage venues in Rome, Italy",
+        "description": "Experience lingam massage in Rome. A tantric practice honoring masculine energy. Find verified practitioners in Italy.",
         "url": canonicalUrl,
+        "dateModified": new Date().toISOString(),
         "isPartOf": {
             "@type": "WebSite",
             "name": "Rome Erotic massage",
@@ -243,9 +258,69 @@ const canonicalUrl = 'https://eroticmassagerome.com/lingam-massage';
             ]
         }
     })}></script>
+    <script type="application/ld+json" set:html={`{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is lingam massage exactly?","acceptedAnswer":{"@type":"Answer","text":"Lingam massage is a tantric practice focusing on the male pelvic area. It combines full-body massage with breathwork and energy channeling, treating the lingam (penis) as a center of creative energy. It is part of a broader tantric session, not an isolated service."}},{"@type":"Question","name":"Is lingam massage only for men?","acceptedAnswer":{"@type":"Answer","text":"Yes, lingam massage is specifically designed for the male body. The female equivalent in tantra is called yoni massage. Some practitioners in Rome offer both."}},{"@type":"Question","name":"What is the difference between lingam massage and a regular happy ending?","acceptedAnswer":{"@type":"Answer","text":"Lingam massage is a tantric practice with a spiritual and energetic foundation. It involves breathwork, extended full-body massage, and energy channeling. A happy ending is a more direct, physically-focused service. The experience and intention are quite different."}},{"@type":"Question","name":"How should I prepare for a lingam massage?","acceptedAnswer":{"@type":"Answer","text":"Arrive clean, well-hydrated, and with an open mind. Avoid alcohol before the session. Some practitioners recommend light fasting. Most importantly, be willing to follow the practitioner's guidance on breathing and relaxation."}},{"@type":"Question","name":"What qualifications do lingam massage practitioners have?","acceptedAnswer":{"@type":"Answer","text":"Qualified practitioners in Rome typically have training in tantric bodywork, anatomy, and energy healing. Check practitioner profiles on our listings for information about their background and certifications."}}]}`}></script>
+    
+    <!-- Sticky CTA Footer for Live Cams -->
+    <a href="https://erotiklive.net/" target="_blank" rel="nofollow noopener" class="live-cta-sticky">
+        <span class="live-dot"></span>
+        <span class="live-text">Watch Girls Online</span>
+    </a>
 </Base>
 
 <style>
+    /* Sticky Live CTA Footer - Full Width */
+    .live-cta-sticky {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 9999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        padding: 18px 24px;
+        background: linear-gradient(135deg, #ec4899 0%, #f43f5e 100%);
+        color: white;
+        font-weight: 700;
+        font-size: 1.1rem;
+        text-decoration: none;
+        box-shadow: 
+            0 -4px 20px rgba(236, 72, 153, 0.4),
+            0 -2px 10px rgba(0, 0, 0, 0.15);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .live-cta-sticky:hover {
+        background: linear-gradient(135deg, #db2777 0%, #e11d48 100%);
+    }
+    
+    .live-dot {
+        width: 14px;
+        height: 14px;
+        background: #22c55e;
+        border-radius: 50%;
+        animation: pulseDot 1.5s infinite;
+        box-shadow: 0 0 12px rgba(34, 197, 94, 0.9);
+    }
+    
+    .live-text {
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+    }
+    
+    @keyframes pulseDot {
+        0%, 100% { transform: scale(1); opacity: 1; }
+        50% { transform: scale(1.3); opacity: 0.85; }
+    }
+    
+    @media (max-width: 600px) {
+        .live-cta-sticky {
+            padding: 16px 20px;
+            font-size: 1rem;
+        }
+    }
+    
     .category-hero {
         text-align: center;
     }

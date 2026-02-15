@@ -39,7 +39,7 @@ const siteName = 'Rome Erotic Massage 🏛️';
     <title>{title}</title>
     <meta name="title" content={title}>
     <meta name="description" content={description}>
-    <meta name="keywords" content="Rome, erotic massage, adult massage, Italy">
+    <meta name="keywords" content="Rome, Erotic Massage, adult entertainment, Italy">
     <meta name="author" content="ErotikMaps">
     
     <!-- Canonical URL -->
@@ -55,6 +55,7 @@ const siteName = 'Rome Erotic Massage 🏛️';
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
     <meta property="og:locale" content="en_US">
+    <meta property="article:modified_time" content={new Date().toISOString()}>
     
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
@@ -382,7 +383,7 @@ const siteName = 'Rome Erotic Massage 🏛️';
             </a>
             <nav class="site-nav">
                 <a href="/">Home</a>
-                <a href="/#all-listings">Venues</a>
+                <a href="/#all-listings">Listings</a>
                 <a href="/advertise">Advertise</a>
                 <a href="/contact-business">Contact</a>
                 <a href="https://gopremium.app/create-listing" rel="nofollow" class="nav-btn">+ Add Listing</a>
@@ -436,17 +437,9 @@ const siteName = 'Rome Erotic Massage 🏛️';
     </main>
     
     <footer class="footer">
-        <!-- Top Wave Decoration -->
-        <div class="footer-wave">
-            <svg viewBox="0 0 1440 100" preserveAspectRatio="none">
-                <path fill="currentColor" d="M0,50 C360,100 1080,0 1440,50 L1440,100 L0,100 Z"></path>
-            </svg>
-        </div>
-        
         <div class="container">
             <!-- Free Listing CTA Banner - Premium Design -->
             <div class="footer-cta-banner">
-                <div class="cta-glow"></div>
                 <div class="cta-content">
                     <div class="cta-icon-wrapper">
                         <span class="cta-icon">🚀</span>
@@ -454,11 +447,11 @@ const siteName = 'Rome Erotic Massage 🏛️';
                     <div class="cta-text">
                         <span class="cta-badge">✨ 100% FREE</span>
                         <h3>Own a Erotic Massage business in Rome?</h3>
-                        <p>Get discovered by thousands of clients searching for premium adult wellness services. Join our network today!</p>
+                        <p>Get discovered by clients searching for adult wellness services in your area. Join our network today!</p>
                     </div>
                 </div>
                 <a href="https://gopremium.app/create-listing" rel="nofollow" class="cta-button">
-                    <span>Add Your Venue</span>
+                    <span>Add Your Listing</span>
                     <span class="cta-arrow">→</span>
                 </a>
             </div>
@@ -471,7 +464,7 @@ const siteName = 'Rome Erotic Massage 🏛️';
                         <span class="footer-logo-icon">🔥</span>
                         <span class="footer-logo-text">Rome Erotic Massage 🏛️</span>
                     </div>
-                    <p class="footer-tagline">Your trusted guide to premium Erotic Massage experiences in Rome.</p>
+                    <p class="footer-tagline">Your trusted guide to Erotic Massage in Rome.</p>
                     
                     <!-- Social/Contact Icons -->
                     <div class="footer-social">
@@ -481,7 +474,7 @@ const siteName = 'Rome Erotic Massage 🏛️';
                         <a href="mailto:office@erotikmaps.com" class="social-btn email" title="Email">
                             ✉️
                         </a>
-                        <a href="https://erotikmaps.com" class="social-btn web" rel="dofollow" title="Main Website">
+                        <a href="https://erotikmaps.com" class="social-btn web" title="Main Website">
                             🌐
                         </a>
                     </div>
@@ -502,7 +495,7 @@ const siteName = 'Rome Erotic Massage 🏛️';
                         </h4>
                         <nav class="footer-nav">
                             <a href="/">🏠 Homepage</a>
-                            <a href="/#all-listings">📍 All Venues</a>
+                            <a href="/#all-listings">📍 All Listings</a>
                             <a href="/#faq">❓ FAQ</a>
                             <a href="/advertise">📢 Advertise</a>
                         </nav>
@@ -514,12 +507,12 @@ const siteName = 'Rome Erotic Massage 🏛️';
                             Categories
                         </h4>
                         <nav class="footer-nav">
-                            <a href="https://erotikmaps.com/erotic-massage" rel="dofollow">Erotic Massage</a>
-                            <a href="https://erotikmaps.com/tantric-massage" rel="dofollow">Tantric Massage</a>
-                            <a href="https://erotikmaps.com/nuru-massage" rel="dofollow">Nuru Massage</a>
-                            <a href="https://erotikmaps.com/gentlemens-club" rel="dofollow">Gentlemen's Clubs</a>
-                            <a href="https://erotikmaps.com/swinger-club" rel="dofollow">Swinger Clubs</a>
-                            <a href="https://erotikmaps.com/gfe" rel="dofollow">GFE - Girlfriend Experience</a>
+                            <a href="https://erotikmaps.com/erotic-massage">Erotic Massage</a>
+                            <a href="https://erotikmaps.com/tantric-massage">Tantric Massage</a>
+                            <a href="https://erotikmaps.com/nuru-massage">Nuru Massage</a>
+                            <a href="https://erotikmaps.com/gentlemens-club">Gentlemen's Clubs</a>
+                            <a href="https://erotikmaps.com/swinger-club">Swinger Clubs</a>
+                            <a href="https://erotikmaps.com/gfe">GFE - Girlfriend Experience</a>
                         </nav>
                     </div>
                     
@@ -529,11 +522,11 @@ const siteName = 'Rome Erotic Massage 🏛️';
                             Top Destinations
                         </h4>
                         <nav class="footer-nav">
-                            <a href="https://erotikmaps.com/erotic-massage/germany" rel="dofollow">🇩🇪 Germany</a>
-                            <a href="https://erotikmaps.com/erotic-massage/spain" rel="dofollow">🇪🇸 Spain</a>
-                            <a href="https://erotikmaps.com/erotic-massage/czech-republic" rel="dofollow">🇨🇿 Czech Republic</a>
-                            <a href="https://erotikmaps.com/erotic-massage/thailand" rel="dofollow">🇹🇭 Thailand</a>
-                            <a href="https://erotikmaps.com/erotic-massage/" rel="dofollow">📍 Italy</a>
+                            <a href="https://erotikmaps.com/erotic-massage/germany">🇩🇪 Germany</a>
+                            <a href="https://erotikmaps.com/erotic-massage/spain">🇪🇸 Spain</a>
+                            <a href="https://erotikmaps.com/erotic-massage/czech-republic">🇨🇿 Czech Republic</a>
+                            <a href="https://erotikmaps.com/erotic-massage/thailand">🇹🇭 Thailand</a>
+                            <a href="https://erotikmaps.com/erotic-massage/">📍 Italy</a>
                         </nav>
                     </div>
                     
@@ -565,7 +558,7 @@ const siteName = 'Rome Erotic Massage 🏛️';
             <div class="footer-bottom">
                 <div class="footer-copyright">
                     <p>&copy; {new Date().getFullYear()} <strong>Rome Erotic Massage 🏛️</strong></p>
-                    <p class="network-text">Part of the <a href="https://erotikmaps.com" rel="dofollow">ErotikMaps</a> Network</p>
+                    <p class="network-text">Part of the <a href="https://erotikmaps.com">ErotikMaps</a> Network</p>
                 </div>
                 
                 <div class="footer-legal">

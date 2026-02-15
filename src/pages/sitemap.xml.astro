@@ -2,7 +2,7 @@
 // Generate sitemap.xml at build time
 const domain = 'https://eroticmassagerome.com';
 
-// Fetch all listings
+// Fetch all listings (city first, then country fallback - matching homepage logic)
 let listings = [];
 try {
     const res = await fetch('https://www.erotikmaps.com/api/v1/satellite/listings?city=rome&category=erotic-massage&limit=200', {
@@ -13,7 +13,27 @@ try {
         listings = (data.data || []).filter((l: any) => l && l.slug);
     }
 } catch (e) {
-    console.error('Sitemap: Failed to fetch listings');
+    console.error('Sitemap: Failed to fetch city listings');
+}
+
+// Country fallback for sitemap (Gold + premium + 20 others)
+if (listings.length === 0) {
+    try {
+        const res = await fetch('https://www.erotikmaps.com/api/v1/satellite/listings?country=italy&category=erotic-massage&limit=200', {
+            headers: { 'Accept': 'application/json', 'User-Agent': 'Sitemap-Generator/1.0' }
+        });
+        if (res.ok) {
+            const data = await res.json();
+            const all = (data.data || []).filter((l: any) => l && l.slug);
+            const goldOnes = all.filter((l: any) => l.is_gold);
+            const premiumOnes = all.filter((l: any) => l.is_premium && !l.is_gold);
+            const others = all.filter((l: any) => !l.is_premium && !l.is_gold);
+            const selected = others.sort((a: any, b: any) => (a.id || 0) - (b.id || 0)).slice(0, 20);
+            listings = [...goldOnes, ...premiumOnes, ...selected];
+        }
+    } catch (e) {
+        console.error('Sitemap: Failed to fetch country fallback listings');
+    }
 }
 
 // Static pages

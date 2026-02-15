@@ -1,6 +1,8 @@
 ---
 import Base from '../layouts/Base.astro';
 import ListingCard from '../components/ListingCard.astro';
+import GeoBanner from '../components/GeoBanner.astro';
+import NetworkLinks from '../components/NetworkLinks.astro';
 
 export async function getStaticPaths() {
     // Safe fetch helper defined inside getStaticPaths for Astro build context
@@ -31,11 +33,61 @@ export async function getStaticPaths() {
         }
     }
     
-    const apiUrl = 'https://www.erotikmaps.com/api/v1/satellite/listings?city=rome&category=erotic-massage&limit=100';
-    const listings = await safeFetch(apiUrl);
+    // Fetch city listings first (main category)
+    const cityApiUrl = 'https://www.erotikmaps.com/api/v1/satellite/listings?city=rome&category=erotic-massage&limit=100';
+    let listings = await safeFetch(cityApiUrl);
+    
+    // Country fallback - MUST match homepage logic exactly (Gold + premium + 20 others sorted by ID)
+    if (listings.length === 0) {
+        console.log('[getStaticPaths] No city listings, trying country fallback...');
+        const countryApiUrl = 'https://www.erotikmaps.com/api/v1/satellite/listings?country=italy&category=erotic-massage&limit=200';
+        const allCountryListings = await safeFetch(countryApiUrl);
+        
+        if (allCountryListings.length > 0) {
+            const goldOnes = allCountryListings.filter((l: any) => l.is_gold);
+            const premiumOnes = allCountryListings.filter((l: any) => l.is_premium && !l.is_gold);
+            const others = allCountryListings.filter((l: any) => !l.is_premium && !l.is_gold);
+            const selected = others.sort((a: any, b: any) => (a.id || 0) - (b.id || 0)).slice(0, 20);
+            listings = [...goldOnes, ...premiumOnes, ...selected];
+            console.log('[getStaticPaths] Country fallback: ' + listings.length + ' listings (gold: ' + goldOnes.length + ', premium: ' + premiumOnes.length + ')');
+        }
+    }
+    
+    // Also fetch cross-category listings (matching homepage related categories)
+    // This ensures pages exist for gentlemen's club / swinger club listings shown on the homepage
+    const relatedCats: Record<string, string[]> = {
+        'erotic-massage': ['gentlemens-club', 'swinger-club'],
+        'gentlemens-club': ['erotic-massage', 'swinger-club'],
+        'swinger-club': ['erotic-massage', 'gentlemens-club']
+    };
+    const currentRelated = relatedCats['erotic-massage'] || [];
+    
+    for (const relCat of currentRelated) {
+        // Try city first, then country fallback
+        let relUrl = 'https://www.erotikmaps.com/api/v1/satellite/listings?city=rome&category=' + relCat + '&limit=6';
+        let relData = await safeFetch(relUrl);
+        
+        if (relData.length === 0) {
+            relUrl = 'https://www.erotikmaps.com/api/v1/satellite/listings?country=italy&category=' + relCat + '&limit=6';
+            relData = await safeFetch(relUrl);
+        }
+        
+        if (relData.length > 0) {
+            listings = [...listings, ...relData.slice(0, 6)];
+            console.log('[getStaticPaths] Added ' + Math.min(relData.length, 6) + ' cross-category listings for ' + relCat);
+        }
+    }
+    
+    // Deduplicate by slug (in case a listing appears in multiple categories)
+    const seen = new Set<string>();
+    listings = listings.filter((l: any) => {
+        if (!l || !l.slug || seen.has(l.slug)) return false;
+        seen.add(l.slug);
+        return true;
+    });
     
     if (listings.length === 0) {
-        console.warn('[getStaticPaths] No listings found, returning empty paths');
+        console.warn('[getStaticPaths] No listings found in city or country, returning empty paths');
         return [];
     }
     
@@ -93,11 +145,11 @@ const nextListing = position < total ? allListings[position] : null;
 // Generate meta description with unique content
 const metaDesc = fullListing.description 
     ? fullListing.description.replace(/<[^>]*>/g, '').substring(0, 155) + '...'
-    : `Discover ${listing.name}, one of the top Erotic massage venues in Rome. Contact info, photos, services & reviews.`;
+    : `Discover ${listing.name}, one of the top Erotic Massage venues in Rome. Contact info, photos, services & reviews.`;
 ---
 
 <Base 
-    title={`${listing.name} - Erotic massage in Rome | Rome Erotic massage`}
+    title={`${listing.name} - Erotic Massage in Rome | Rome Erotic massage`}
     description={metaDesc}
     canonical={canonicalUrl}
     image={listing.thumbnail}
@@ -113,7 +165,7 @@ const metaDesc = fullListing.description
                 </span>
                 &rsaquo;
                 <span itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-                    <a href="/#all-listings" itemprop="item"><span itemprop="name">Erotic massage</span></a>
+                    <a href="/#all-listings" itemprop="item"><span itemprop="name">Erotic Massage</span></a>
                     <meta itemprop="position" content="2" />
                 </span>
                 &rsaquo;
@@ -123,29 +175,45 @@ const metaDesc = fullListing.description
                 </span>
             </nav>
             
-            <!-- Header - Clean compact design -->
-            <header class="listing-header">
-                <div class="listing-hero-wrapper">
+            <!-- Hero Banner - Full width modern design -->
+            <header class="listing-hero-banner">
+                <div class="hero-image-container">
                     <img 
                         src={listing.thumbnail} 
-                        alt={`${listing.name} - Professional Erotic massage venue in Rome, Italy. ${listing.is_gold ? 'Gold verified establishment.' : listing.is_premium ? 'Premium verified venue.' : 'Quality adult wellness services.'}`}
-                        class="listing-hero-image"
+                        alt={`${listing.name} - Professional Erotic Massage venue in Rome, Italy. ${listing.is_gold ? 'Gold verified establishment.' : listing.is_premium ? 'Silver verified listing.' : 'Quality adult wellness services.'}`}
+                        class="hero-bg-image"
                         loading="eager"
                         itemprop="image"
                     />
+                    <div class="hero-overlay"></div>
                 </div>
-                <div class="listing-header-content">
+                <div class="hero-content">
+                    <div class="hero-badges">
+                        {listing.is_gold && <span class="hero-badge gold"><span class="badge-icon">🏆</span> Gold Verified</span>}
+                        {listing.is_premium && !listing.is_gold && <span class="hero-badge premium"><span class="badge-icon">⭐</span> Silver</span>}
+                    </div>
                     <h1 itemprop="name">{listing.name}</h1>
-                    <p class="location" itemprop="address" itemscope itemtype="https://schema.org/PostalAddress">
-                        📍 <span itemprop="addressLocality">{listing.city}</span>, 
+                    <p class="hero-location" itemprop="address" itemscope itemtype="https://schema.org/PostalAddress">
+                        <span class="location-icon">📍</span>
+                        <span itemprop="addressLocality">{listing.city}</span>, 
                         <span itemprop="addressCountry">{listing.country}</span>
                     </p>
-                    <div class="header-badges">
-                        {listing.is_gold && <span class="badge gold">🏆 Gold</span>}
-                        {listing.is_premium && <span class="badge premium">⭐ Premium</span>}
-                    </div>
+                    {fullListing.updated_at && (
+                        <p class="listing-last-updated">
+                            <time datetime={fullListing.updated_at} itemprop="dateModified">
+                                Updated {new Date(fullListing.updated_at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+                            </time>
+                        </p>
+                    )}
                 </div>
             </header>
+            
+            <!-- GeoBanner - Top position for non-Gold/Silver -->
+            {!listing.is_gold && !listing.is_premium && (
+                <div class="listing-banner-slot top-banner">
+                    <GeoBanner />
+                </div>
+            )}
             
             <!-- QUICK CONTACT SECTION - Very prominent, mobile-first -->
             <section class="quick-contact-section">
@@ -267,15 +335,15 @@ const metaDesc = fullListing.description
                     <!-- Gallery - Organized Grid -->
                     {fullListing.gallery && fullListing.gallery.length > 0 && (
                         <section class="section gallery-section">
-                            <h2>📸 Photo & Video Gallery</h2>
+                            <h2><span class="heading-icon" aria-hidden="true">📸</span> Photo & Video Gallery</h2>
                             <p class="gallery-intro">{fullListing.gallery.length} media items from {listing.name}</p>
-                            <div class="gallery-grid">
+                            <div class="gallery-grid" id="gallery-grid">
                                 {fullListing.gallery.slice(0, 12).map((item: any, idx: number) => (
-                                    <div class={`gallery-item ${idx === 0 ? 'featured' : ''}`} key={idx}>
+                                    <div class={`gallery-item ${idx === 0 ? 'featured' : ''}`} key={idx} onclick={`openLightbox(${idx})`}>
                                         {item.type === 'image' ? (
                                             <img 
                                                 src={item.url} 
-                                                alt={`${listing.name} Erotic massage in Rome - ${idx === 0 ? 'Main venue photo showing interior and ambiance' : idx === 1 ? 'Professional service environment' : idx === 2 ? 'Relaxation area and facilities' : 'Venue photo ' + (idx + 1) + ' - Quality Erotic massage experience in Italy'}`}
+                                                alt={`${listing.name} - Erotic Massage in Rome, Italy - Photo ${idx + 1}`}
                                                 loading="lazy"
                                                 class="gallery-media"
                                             />
@@ -283,9 +351,7 @@ const metaDesc = fullListing.description
                                             <div class="video-wrapper">
                                                 <video 
                                                     src={item.url} 
-                                                    controls 
                                                     preload="metadata"
-                                                    poster={listing.thumbnail}
                                                     class="gallery-media"
                                                 ></video>
                                                 <span class="video-badge">▶ Video</span>
@@ -297,20 +363,93 @@ const metaDesc = fullListing.description
                             {fullListing.gallery.length > 12 && (
                                 <p class="gallery-more">+ {fullListing.gallery.length - 12} more photos available</p>
                             )}
+                            
+                            <!-- Lightbox -->
+                            <div id="lightbox" class="lightbox">
+                                <span class="close-btn" onclick="closeLightbox()">&times;</span>
+                                <img id="lightbox-img" class="lightbox-content" src="" />
+                                <video id="lightbox-video" class="lightbox-content" controls style="display:none;"></video>
+                                <a class="prev" onclick="changeSlide(-1)">&#10094;</a>
+                                <a class="next" onclick="changeSlide(1)">&#10095;</a>
+                            </div>
+
+                            <script define:vars={{ gallery: fullListing.gallery }}>
+                                let currentIndex = 0;
+                                const lightbox = document.getElementById('lightbox');
+                                const lightboxImg = document.getElementById('lightbox-img');
+                                const lightboxVideo = document.getElementById('lightbox-video');
+                                
+                                window.openLightbox = function(index) {
+                                    currentIndex = index;
+                                    lightbox.style.display = "block";
+                                    showSlide(currentIndex);
+                                    document.body.style.overflow = 'hidden';
+                                }
+                                
+                                window.closeLightbox = function() {
+                                    lightbox.style.display = "none";
+                                    lightboxVideo.pause();
+                                    document.body.style.overflow = 'auto';
+                                }
+                                
+                                window.changeSlide = function(n) {
+                                    currentIndex += n;
+                                    if (currentIndex >= gallery.length) currentIndex = 0;
+                                    if (currentIndex < 0) currentIndex = gallery.length - 1;
+                                    showSlide(currentIndex);
+                                }
+                                
+                                function showSlide(index) {
+                                    const item = gallery[index];
+                                    if (item.type === 'image') {
+                                        lightboxImg.style.display = 'block';
+                                        lightboxVideo.style.display = 'none';
+                                        lightboxImg.src = item.url;
+                                        lightboxVideo.pause();
+                                    } else {
+                                        lightboxImg.style.display = 'none';
+                                        lightboxVideo.style.display = 'block';
+                                        lightboxVideo.src = item.url;
+                                    }
+                                }
+                                
+                                // Close on outside click
+                                lightbox.addEventListener('click', function(e) {
+                                    if (e.target === lightbox) {
+                                        closeLightbox();
+                                    }
+                                });
+                                
+                                // Keyboard navigation
+                                document.addEventListener('keydown', function(e) {
+                                    if (lightbox.style.display === "block") {
+                                        if (e.key === "Escape") closeLightbox();
+                                        if (e.key === "ArrowLeft") changeSlide(-1);
+                                        if (e.key === "ArrowRight") changeSlide(1);
+                                    }
+                                });
+                            </script>
                         </section>
+                    )}
+                    
+                    <!-- GeoBanner for non-Gold/Silver listings - After Gallery -->
+                    {!listing.is_gold && !listing.is_premium && (
+                        <div class="listing-banner-slot">
+                            <GeoBanner />
+                        </div>
                     )}
                     
                     <!-- Why Choose Section - Unique SEO content -->
                     <section class="section why-choose">
                         <h2>Why Choose {listing.name}?</h2>
                         <p>
-                            Looking for quality Erotic massage services in Rome? 
+                            Looking for quality Erotic Massage services in Rome? 
                             {listing.name} is one of the {total} verified establishments we feature in the Rome area.
-                            {listing.is_premium ? " As a premium listing, this venue has been verified for quality and reliability." : ""}
+                            {listing.is_premium ? " As a Silver listing, this place has been verified for quality and reliability." : ""}
                             {listing.is_gold ? " This Gold-rated venue is among the highest-rated in Rome." : ""}
                         </p>
                         <ul>
-                            <li>✓ Verified Erotic massage establishment</li>
+                            <li>✓ Verified Erotic Massage establishment</li>
                             <li>✓ Located in Rome, Italy</li>
                             <li>✓ Direct contact information available</li>
                             {fullListing.gallery && fullListing.gallery.length > 0 && (
@@ -324,21 +463,21 @@ const metaDesc = fullListing.description
                     
                     <!-- Unique Local SEO Content -->
                     <section class="section local-seo-content">
-                        <h2>Erotic massage Experience in Rome</h2>
+                        <h2>Erotic Massage Experience in Rome</h2>
                         <p>
-                            {listing.name} offers authentic Erotic massage experiences in the heart of Rome, Italy. 
+                            {listing.name} offers authentic Erotic Massage experiences in the heart of Rome, Italy. 
                             Whether you're a local resident or visiting Rome for business or leisure, 
                             this venue provides professional services in a comfortable, discreet environment.
                         </p>
                         <p>
                             As listing #{position} of {total} in our Rome directory, {listing.name} has been 
                             {listing.is_gold ? "awarded our Gold verification for exceptional service quality" : 
-                             listing.is_premium ? "verified as a Premium establishment" : 
-                             "verified and added to our curated selection of Erotic massage venues"}.
+                             listing.is_premium ? "verified as a Silver establishment" : 
+                             "verified and added to our curated selection of Erotic Massage venues"}.
                         </p>
                         <h3>What to Expect</h3>
                         <p>
-                            When visiting {listing.name}, you can expect professional Erotic massage services 
+                            When visiting {listing.name}, you can expect professional Erotic Massage services 
                             tailored to your preferences. The venue is committed to providing a relaxing and 
                             satisfying experience for all clients. Contact them directly using the information 
                             provided to inquire about availability, pricing, and specific services.
@@ -356,14 +495,14 @@ const metaDesc = fullListing.description
                     <!-- Contact Card - Prominently displayed -->
                     <div class="contact-card-premium">
                         <div class="contact-header">
-                            <h3>📞 Contact {listing.name}</h3>
+                            <h3><span class="heading-icon" aria-hidden="true">📞</span> Contact {listing.name}</h3>
                             <p class="contact-subtitle">Get in touch directly</p>
                         </div>
                         
                         <!-- WhatsApp CTA - Most prominent -->
                         {fullListing.whatsapp && (
                             <a 
-                                href={`https://wa.me/${fullListing.whatsapp.replace(/[^0-9]/g, '')}?text=Hi! I found you on the Erotic massage directory and I'm interested in your services.`}
+                                href={`https://wa.me/${fullListing.whatsapp.replace(/[^0-9]/g, '')}?text=Hi! I found you on the Erotic Massage directory and I'm interested in your services.`}
                                 class="whatsapp-cta"
                                 target="_blank"
                                 rel="noopener"
@@ -392,7 +531,7 @@ const metaDesc = fullListing.description
                             </a>
                         )}
                         
-                        <!-- Website - nofollow unless Gold/Premium -->
+                        <!-- Website - nofollow unless Gold/Silver -->
                         {fullListing.website && (
                             <a 
                                 href={fullListing.website} 
@@ -419,7 +558,7 @@ const metaDesc = fullListing.description
                     
                     <!-- View on ErotikMaps -->
                     <div class="view-original">
-                        <a href={listing.url} target="_blank" rel="dofollow" class="btn-erotikmaps">
+                        <a href={listing.url} target="_blank" class="btn-erotikmaps">
                             View Full Profile on ErotikMaps →
                         </a>
                     </div>
@@ -428,18 +567,25 @@ const metaDesc = fullListing.description
                     <div class="quick-links">
                         <h4>Quick Links</h4>
                         <ul>
-                            <li><a href="/">← All Erotic massage in Rome</a></li>
+                            <li><a href="/">← All Erotic Massage in Rome</a></li>
                             <li><a href="/#faq">Frequently Asked Questions</a></li>
-                            <li><a href="/#premium">Premium Listings</a></li>
+                            <li><a href="/#premium">Silver Listings</a></li>
                         </ul>
                     </div>
                 </aside>
             </div>
             
+            <!-- GeoBanner for non-Gold/Silver listings - Before Similar Listings -->
+            {!listing.is_gold && !listing.is_premium && (
+                <div class="listing-banner-slot bottom-banner">
+                    <GeoBanner />
+                </div>
+            )}
+            
             <!-- Similar Listings -->
             {similarListings.length > 0 && (
                 <section class="similar-listings">
-                    <h2>Similar Erotic massage in Rome</h2>
+                    <h2>Similar Erotic Massage in Rome</h2>
                     <p>Discover other venues that might interest you:</p>
                     <div class="listings-grid small">
                         {similarListings.map((l: any) => (
@@ -454,7 +600,7 @@ const metaDesc = fullListing.description
             
             <!-- FAQ Section - Visible for SEO -->
             <section class="listing-faq" id="listing-faq" itemscope itemtype="https://schema.org/FAQPage">
-                <h2>❓ Frequently Asked Questions about {listing.name}</h2>
+                <h2><span class="heading-icon" aria-hidden="true">❓</span> Frequently Asked Questions about {listing.name}</h2>
                 
                 <div class="faq-accordion">
                     <details class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
@@ -465,13 +611,13 @@ const metaDesc = fullListing.description
                             <div itemprop="text">
                                 {fullListing.services && fullListing.services.length > 0 ? (
                                     <p>
-                                        {listing.name} offers the following Erotic massage services: 
+                                        {listing.name} offers the following Erotic Massage services: 
                                         <strong>{fullListing.services.join(', ')}</strong>. 
                                         Located in Rome, Italy, this venue provides professional adult wellness and relaxation experiences.
                                     </p>
                                 ) : (
                                     <p>
-                                        {listing.name} provides professional Erotic massage services in Rome, Italy. 
+                                        {listing.name} provides professional Erotic Massage services in Rome, Italy. 
                                         Contact them directly for a full list of available services and treatments.
                                     </p>
                                 )}
@@ -527,16 +673,16 @@ const metaDesc = fullListing.description
                                     <p>
                                         ✅ <strong>Yes!</strong> {listing.name} is a <span class="badge gold">🏆 Gold Verified</span> venue on our directory. 
                                         Gold venues have been verified for quality, reliability, and excellent service. 
-                                        This is one of the top-rated Erotic massage venues in Rome.
+                                        This is one of the top-rated Erotic Massage venues in Rome.
                                     </p>
                                 ) : listing.is_premium ? (
                                     <p>
-                                        ✅ <strong>Yes!</strong> {listing.name} is a <span class="badge premium">⭐ Premium Verified</span> venue. 
-                                        Premium venues have been reviewed and meet our quality standards for Erotic massage services in Rome.
+                                        ✅ <strong>Yes!</strong> {listing.name} is a <span class="badge premium">⭐ Silver Verified</span> listing. 
+                                        Silver listings have been reviewed and meet our quality standards for Erotic Massage services in Rome.
                                     </p>
                                 ) : (
                                     <p>
-                                        {listing.name} is listed in our Erotic massage directory for Rome. 
+                                        {listing.name} is listed in our Erotic Massage directory for Rome. 
                                         We recommend contacting them directly to verify services and availability.
                                     </p>
                                 )}
@@ -559,7 +705,7 @@ const metaDesc = fullListing.description
                                 ) : (
                                     <p>
                                         🕐 For current opening hours at {listing.name}, please contact them directly. 
-                                        Many Erotic massage venues in Rome operate from late morning until late evening.
+                                        Many Erotic Massage venues in Rome operate from late morning until late evening.
                                     </p>
                                 )}
                             </div>
@@ -580,7 +726,7 @@ const metaDesc = fullListing.description
         "@type": ["LocalBusiness", "HealthAndBeautyBusiness"],
         "@id": canonicalUrl,
         "name": listing.name,
-        "description": fullListing.description ? fullListing.description.replace(/<[^>]*>/g, '').substring(0, 300) : `Professional Erotic massage venue located in Rome, Italy. Offering premium adult wellness and relaxation services.`,
+        "description": fullListing.description ? fullListing.description.replace(/<[^>]*>/g, '').substring(0, 300) : `Professional Erotic Massage venue located in Rome, Italy. Offering quality adult wellness and relaxation services.`,
         "url": canonicalUrl,
         "image": fullListing.gallery && fullListing.gallery.length > 0 
             ? [listing.thumbnail, ...fullListing.gallery.slice(0, 5).map((g: any) => g.url)]
@@ -592,7 +738,7 @@ const metaDesc = fullListing.description
             "@type": "PostalAddress",
             "streetAddress": fullListing.address || undefined,
             "addressLocality": "Rome",
-            "addressRegion": "Rome",
+            "addressRegion": "Italy",
             "addressCountry": "Italy"
         },
         "geo": (fullListing.latitude && fullListing.longitude) ? {
@@ -621,7 +767,7 @@ const metaDesc = fullListing.description
         } : undefined,
         "hasOfferCatalog": (fullListing.services && fullListing.services.length > 0) ? {
             "@type": "OfferCatalog",
-            "name": "Erotic massage Services",
+            "name": "Erotic Massage Services",
             "itemListElement": fullListing.services.map((service: string, idx: number) => ({
                 "@type": "Offer",
                 "itemOffered": {
@@ -666,18 +812,12 @@ const metaDesc = fullListing.description
                 "description": "Contact via WhatsApp"
             } : undefined
         ].filter(Boolean),
-        "knowsAbout": [
-            "Erotic massage",
-            "Adult Wellness",
-            "Relaxation Services",
-            "Professional Massage",
-            "Rome Services"
-        ],
+        "knowsAbout": ["Erotic Massage", "Adult Wellness", "Relaxation Services", "Professional Massage", "Rome Massage"],
         "slogan": listing.is_gold 
-            ? "Gold Verified Premium Venue" 
+            ? "Gold Verified Venue" 
             : listing.is_premium 
-                ? "Premium Verified Venue" 
-                : "Quality Erotic massage Services"
+                ? "Silver Verified Venue" 
+                : "Quality Erotic Massage Services"
     })}></script>
     
     <!-- Schema.org FAQPage - Dynamic FAQ for this listing -->
@@ -691,8 +831,8 @@ const metaDesc = fullListing.description
                 "acceptedAnswer": {
                     "@type": "Answer",
                     "text": fullListing.services && fullListing.services.length > 0
-                        ? `${listing.name} offers the following Erotic massage services: ${fullListing.services.join(', ')}. Located in Rome, Italy, this venue provides professional adult wellness and relaxation experiences.`
-                        : `${listing.name} provides professional Erotic massage services in Rome, Italy. Contact them directly for a full list of available services and treatments.`
+                        ? `${listing.name} offers the following Erotic Massage services: ${fullListing.services.join(', ')}. Located in Rome, Italy, this venue provides professional adult wellness and relaxation experiences.`
+                        : `${listing.name} provides professional Erotic Massage services in Rome, Italy. Contact them directly for a full list of available services and treatments.`
                 }
             },
             {
@@ -724,10 +864,10 @@ const metaDesc = fullListing.description
                 "acceptedAnswer": {
                     "@type": "Answer",
                     "text": listing.is_gold 
-                        ? `Yes, ${listing.name} is a Gold Verified venue on our directory. Gold venues have been verified for quality, reliability, and excellent service. This is one of the top-rated Erotic massage venues in Rome.`
+                        ? `Yes, ${listing.name} is a Gold Verified venue on our directory. Gold venues have been verified for quality, reliability, and excellent service. This is one of the top-rated Erotic Massage venues in Rome.`
                         : listing.is_premium
-                            ? `Yes, ${listing.name} is a Premium Verified venue. Premium venues have been reviewed and meet our quality standards for Erotic massage services in Rome.`
-                            : `${listing.name} is listed in our Erotic massage directory for Rome. We recommend contacting them directly to verify services and availability.`
+                            ? `Yes, ${listing.name} is a Silver Verified listing. Silver listings have been reviewed and meet our quality standards for Erotic Massage services in Rome.`
+                            : `${listing.name} is listed in our Erotic Massage directory for Rome. We recommend contacting them directly to verify services and availability.`
                 }
             },
             {
@@ -747,11 +887,11 @@ const metaDesc = fullListing.description
     <script type="application/ld+json" set:html={JSON.stringify({
         "@context": "https://schema.org",
         "@type": "WebPage",
-        "name": `${listing.name} - Erotic massage in Rome`,
+        "name": `${listing.name} - Erotic Massage in Rome`,
         "url": canonicalUrl,
         "datePublished": fullListing.created_at || new Date().toISOString(),
         "dateModified": fullListing.updated_at || new Date().toISOString(),
-        "description": fullListing.description ? fullListing.description.replace(/<[^>]*>/g, '').substring(0, 160) : `Discover ${listing.name}, professional Erotic massage venue in Rome.`,
+        "description": fullListing.description ? fullListing.description.replace(/<[^>]*>/g, '').substring(0, 160) : `Discover ${listing.name}, professional Erotic Massage venue in Rome.`,
         "inLanguage": "en",
         "isPartOf": {
             "@type": "WebSite",
@@ -786,7 +926,7 @@ const metaDesc = fullListing.description
                 {
                     "@type": "ListItem",
                     "position": 4,
-                    "name": "Erotic massage",
+                    "name": "Erotic Massage",
                     "item": "https://eroticmassagerome.com/#all-listings"
                 },
                 {
@@ -808,7 +948,7 @@ const metaDesc = fullListing.description
         <div class="sticky-contact-bar">
             {fullListing.whatsapp && (
                 <a 
-                    href={`https://wa.me/${fullListing.whatsapp.replace(/[^0-9]/g, '')}?text=Hi! I found you on the Erotic massage directory.`}
+                    href={`https://wa.me/${fullListing.whatsapp.replace(/[^0-9]/g, '')}?text=Hi! I found you on the Erotic Massage directory.`}
                     class="sticky-btn whatsapp"
                     target="_blank"
                     rel="noopener"
@@ -825,6 +965,10 @@ const metaDesc = fullListing.description
             )}
         </div>
     )}
+    
+    <!-- Network Links - Cross-site SEO links to other satellite sites -->
+    <NetworkLinks currentCity="Rome" currentCountry="Italy" category="erotic-massage" />
+
 </Base>
 
 <style>
@@ -996,8 +1140,91 @@ const metaDesc = fullListing.description
         border-radius: 8px;
         font-weight: 600;
     }
-    .btn-secondary:hover {
-        background: var(--primary);
+    
+    /* GeoBanner slots for non-premium listings */
+    .listing-banner-slot {
+        margin: 16px 0;
+        text-align: center;
+    }
+    .listing-banner-slot.top-banner {
+        margin: 12px 0 16px 0;
+        padding: 0;
+        background: transparent;
+    }
+    .listing-banner-slot.bottom-banner {
+        margin: 24px auto;
+        max-width: 728px;
+    }
+    
+    <!-- Mobile Sticky Footer for Listings -->
+    {fullListing.whatsapp || fullListing.phone ? (
+        <div class="mobile-sticky-footer">
+            {fullListing.whatsapp && (
+                <a 
+                    href={`https://wa.me/${fullListing.whatsapp.replace(/[^0-9]/g, '')}?text=Hi! I found you on the Erotic Massage directory.`}
+                    class="sticky-btn sticky-whatsapp"
+                    target="_blank"
+                    rel="noopener"
+                >
+                    <span class="icon">💬</span> WhatsApp
+                </a>
+            )}
+            {fullListing.phone && (
+                <a href={`tel:${fullListing.phone}`} class="sticky-btn sticky-phone">
+                    <span class="icon">📞</span> Call
+                </a>
+            )}
+        </div>
+    ) : null}
+</Base>
+
+<style>
+    /* ... existing styles ... */
+    
+    /* Mobile Sticky Footer */
+    .mobile-sticky-footer {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background: white;
+        box-shadow: 0 -4px 20px rgba(0,0,0,0.1);
+        padding: 12px;
+        display: none; /* Hidden by default */
+        z-index: 999;
+        gap: 12px;
+    }
+
+    .sticky-btn {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 12px;
+        border-radius: 8px;
+        font-weight: 600;
+        text-decoration: none;
         color: white;
+        font-size: 1rem;
+    }
+
+    .sticky-whatsapp {
+        background: #25D366;
+    }
+
+    .sticky-phone {
+        background: var(--primary);
+    }
+
+    @media (max-width: 768px) {
+        .mobile-sticky-footer {
+            display: flex;
+        }
+        
+        /* Add padding to body so footer doesn't cover content */
+        body {
+            padding-bottom: 70px;
+        }
     }
 </style>

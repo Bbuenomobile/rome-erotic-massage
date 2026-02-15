@@ -13,10 +13,10 @@ let relatedCities = [];
 
 try {
     const [sitesRes, citiesRes] = await Promise.all([
-        fetch('https://www.erotikmaps.com/api/v1/satellite/api/v1/satellite/network-sites?exclude_city=' + encodeURIComponent(currentCity) + '&category=' + category + '&limit=12', {
+        fetch('https://www.erotikmaps.com/api/v1/satellite/network-sites?exclude_city=' + encodeURIComponent(currentCity) + '&category=' + category + '&limit=12', {
             headers: { 'User-Agent': 'Astro/Netlify-Build', 'Accept': 'application/json' }
         }),
-        fetch('https://www.erotikmaps.com/api/v1/satellite/api/v1/satellite/related-cities?country=' + encodeURIComponent(currentCountry.toLowerCase().replace(/ /g, '-')) + '&exclude_city=' + encodeURIComponent(currentCity) + '&limit=8', {
+        fetch('https://www.erotikmaps.com/api/v1/satellite/related-cities?country=' + encodeURIComponent(currentCountry.toLowerCase().replace(/ /g, '-')) + '&exclude_city=' + encodeURIComponent(currentCity) + '&limit=8', {
             headers: { 'User-Agent': 'Astro/Netlify-Build', 'Accept': 'application/json' }
         })
     ]);
@@ -43,12 +43,12 @@ function getRandomAnchor(site) {
 {(networkSites.length > 0 || relatedCities.length > 0) && (
     <section class="network-links">
         <div class="container">
-            <h2>🌍 Explore Our Network</h2>
-            <p class="network-intro">Discover erotic massage & adult entertainment venues across Europe and beyond</p>
+            <h2><span class="heading-icon" aria-hidden="true">🌍</span> Our Directory Network</h2>
+            <p class="network-intro">Discover adult entertainment venues across Europe, Americas, Asia and beyond</p>
             
             {relatedCities.length > 0 && (
                 <div class="network-section">
-                    <h3>📍 More Cities in {currentCountry}</h3>
+                    <h3><span class="heading-icon" aria-hidden="true">📍</span> More Cities in {currentCountry}</h3>
                     <div class="city-links">
                         {relatedCities.map((city) => (
                             <a href={city.url} class="city-link" title={'Erotic massage in ' + city.city}>
@@ -61,7 +61,7 @@ function getRandomAnchor(site) {
             
             {networkSites.length > 0 && (
                 <div class="network-section">
-                    <h3>🗺️ Popular Destinations</h3>
+                    <h3><span class="heading-icon" aria-hidden="true">🗺️</span> Popular Destinations</h3>
                     <div class="sites-grid">
                         {networkSites.slice(0, 8).map((site) => (
                             <a href={site.url} class="site-card" title={getRandomAnchor(site)}>
@@ -74,7 +74,7 @@ function getRandomAnchor(site) {
             )}
             
             <div class="network-cta">
-                <p>Looking for a specific city? Check the full <a href="https://erotikmaps.com/erotic-massage" rel="dofollow">ErotikMaps directory</a> for all locations worldwide.</p>
+                <p>Looking for a specific city? Check the full <a href="https://erotikmaps.com/erotic-massage">ErotikMaps directory</a> for all locations worldwide.</p>
             </div>
         </div>
     </section>

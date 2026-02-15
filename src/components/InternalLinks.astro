@@ -54,14 +54,14 @@ const massageTypes = [
 
 <section class="internal-links">
     <div class="container">
-        <h2>🔗 Discover More Adult Entertainment</h2>
+        <h2><span class="heading-icon" aria-hidden="true">🔗</span> Discover More Adult Entertainment</h2>
         
         <!-- Main Categories -->
         <div class="links-section">
             <h3>Browse by Category</h3>
             <div class="category-cards">
                 {mainCategories.map((cat) => (
-                    <a href={cat.url} class="category-card" rel="dofollow" title={cat.text + ' worldwide'}>
+                    <a href={cat.url} class="category-card" title={cat.text + ' worldwide'}>
                         <span class="cat-icon">{cat.icon}</span>
                         <span class="cat-text">{cat.text}</span>
                         <span class="cat-arrow">→</span>
@@ -72,10 +72,10 @@ const massageTypes = [
         
         <!-- Country Links -->
         <div class="links-section">
-            <h3>🌍 Popular Countries</h3>
+            <h3><span class="heading-icon" aria-hidden="true">🌍</span> Popular Countries</h3>
             <div class="destination-pills">
                 {popularDestinations.map((dest) => (
-                    <a href={dest.url} class="dest-pill" rel="dofollow" title={'Erotic massage in ' + dest.text}>
+                    <a href={dest.url} class="dest-pill" title={'Erotic massage in ' + dest.text}>
                         <span class="dest-flag">{dest.flag}</span>
                         {dest.text}
                     </a>
@@ -85,22 +85,22 @@ const massageTypes = [
         
         <!-- City Links -->
         <div class="links-section">
-            <h3>🏙️ Top Cities</h3>
+            <h3><span class="heading-icon" aria-hidden="true">🏙️</span> Top Cities</h3>
             <div class="city-tags">
                 {topCities.map((c) => (
-                    <a href={c.url} class="city-tag" rel="dofollow" title={'Adult massage ' + c.text}>
+                    <a href={c.url} class="city-tag" title={'Adult massage ' + c.text}>
                         {c.text}
                     </a>
                 ))}
             </div>
         </div>
         
-        <!-- Massage Types -->
+        <!-- Service Types -->
         <div class="links-section">
-            <h3>💆 Massage Types</h3>
+            <h3><span class="heading-icon" aria-hidden="true">💆</span> Popular Service Types</h3>
             <div class="type-links">
                 {massageTypes.map((type) => (
-                    <a href={type.url} class="type-link" rel="dofollow" title={type.text + ' near you'}>
+                    <a href={type.url} class="type-link" title={type.text + ' near you'}>
                         {type.text}
                     </a>
                 ))}
@@ -111,8 +111,8 @@ const massageTypes = [
         <div class="current-context">
             <p>
                 You're browsing <strong>{category}</strong> venues in <strong>{city}, {country}</strong>.
-                Find more options on <a href={'https://erotikmaps.com/erotic-massage/' + countrySlug} rel="dofollow" title={category + ' in ' + country}>ErotikMaps {country}</a> 
-                or explore the <a href="https://erotikmaps.com" rel="dofollow" title="ErotikMaps - Global adult directory">complete worldwide directory</a>.
+                Find more options on <a href={'https://erotikmaps.com/erotic-massage/' + countrySlug} title={category + ' in ' + country}>ErotikMaps {country}</a> 
+                or browse the <a href="https://erotikmaps.com" title="ErotikMaps - Global adult directory">complete worldwide directory</a>.
             </p>
         </div>
         
@@ -120,17 +120,17 @@ const massageTypes = [
         <div class="seo-content">
             <h3>About ErotikMaps</h3>
             <p>
-                <a href="https://erotikmaps.com" rel="dofollow" title="ErotikMaps adult entertainment directory">ErotikMaps</a> is the world's leading directory for 
-                <a href="https://erotikmaps.com/erotic-massage" rel="dofollow" title="Erotic massage directory">erotic massage</a> parlors, 
-                <a href="https://erotikmaps.com/gentlemens-club" rel="dofollow" title="Gentlemen's clubs worldwide">gentlemen's clubs</a>, 
-                <a href="https://erotikmaps.com/swinger-club" rel="dofollow" title="Swinger clubs directory">swinger clubs</a>, and
-                <a href="https://erotikmaps.com/gfe" rel="dofollow" title="GFE Girlfriend Experience">GFE (Girlfriend Experience)</a> services. 
+                <a href="https://erotikmaps.com" title="ErotikMaps adult entertainment directory">ErotikMaps</a> is the world's leading directory for 
+                <a href="https://erotikmaps.com/erotic-massage" title="Erotic massage directory">erotic massage</a> parlors, 
+                <a href="https://erotikmaps.com/gentlemens-club" title="Gentlemen's clubs worldwide">gentlemen's clubs</a>, 
+                <a href="https://erotikmaps.com/swinger-club" title="Swinger clubs directory">swinger clubs</a>, and
+                <a href="https://erotikmaps.com/gfe" title="GFE Girlfriend Experience">GFE (Girlfriend Experience)</a> services. 
                 Our comprehensive listings cover establishments across Europe, Asia, and the Americas.
             </p>
             <p>
-                Whether you're looking for a relaxing <a href="https://erotikmaps.com/tantric-massage" rel="dofollow" title="Tantric massage venues">tantric massage</a>, 
-                an authentic <a href="https://erotikmaps.com/nuru-massage" rel="dofollow" title="Nuru massage parlors">nuru massage</a> experience, 
-                or a <a href="https://erotikmaps.com/body-to-body-massage" rel="dofollow" title="Body to body massage">body-to-body massage</a>, 
+                Whether you're looking for a relaxing <a href="https://erotikmaps.com/tantric-massage" title="Tantric massage venues">tantric massage</a>, 
+                an authentic <a href="https://erotikmaps.com/nuru-massage" title="Nuru massage parlors">nuru massage</a> experience, 
+                or a <a href="https://erotikmaps.com/body-to-body-massage" title="Body to body massage">body-to-body massage</a>, 
                 ErotikMaps helps you find the perfect venue with verified reviews and detailed information.
             </p>
         </div>

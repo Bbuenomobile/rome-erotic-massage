@@ -28,7 +28,7 @@ const shortDesc = listing.description ? listing.description.substring(0, 90) + '
         <div class="venue-image">
             <img 
                 src={listing.thumbnail} 
-                alt={`${listing.name} - ${listing.is_gold ? 'Gold verified' : listing.is_premium ? 'Premium' : 'Quality'} Erotic massage venue in Rome, Italy. Click to view details, photos and contact info.`}
+                alt={`${listing.name} - ${listing.is_gold ? 'Gold verified' : listing.is_premium ? 'Silver verified' : 'Quality'} Erotic Massage in Rome, Italy. Click for photos and contact info.`}
                 loading={index < 4 ? 'eager' : 'lazy'}
                 decoding="async"
             />
@@ -46,7 +46,7 @@ const shortDesc = listing.description ? listing.description.substring(0, 90) + '
             {isPremium && (
                 <div class="venue-ribbon premium-ribbon">
                     <span class="ribbon-icon">✨</span>
-                    <span>PREMIUM</span>
+                    <span>SILVER</span>
                 </div>
             )}
             
@@ -89,7 +89,7 @@ const shortDesc = listing.description ? listing.description.substring(0, 90) + '
         <!-- Footer -->
         <div class="venue-footer">
             <a href={'/'+listing.slug} class="venue-link">
-                Explore venue →
+                View listing →
             </a>
         </div>
     </div>

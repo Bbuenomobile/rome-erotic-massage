@@ -2,12 +2,13 @@
 export interface Props {
     city: string;
     currentCategory?: string;
+    mainCategory?: string;
 }
 
-const { city, currentCategory } = Astro.props;
+const { city, currentCategory, mainCategory = 'erotic-massage' } = Astro.props;
 
 // Fake categories (sub-types) for erotic massage - real SEO categories
-const categories = [
+const massageCategories = [
     { slug: 'nuru-massage', name: 'Nuru Massage', icon: '💆', description: 'Gel-based body massage' },
     { slug: 'tantric-massage', name: 'Tantric Massage', icon: '🕉️', description: 'Spiritual sensual experience' },
     { slug: 'body-to-body-massage', name: 'Body to Body', icon: '✨', description: 'Full contact massage' },
@@ -19,11 +20,57 @@ const categories = [
     { slug: 'couples-massage', name: 'Couples Massage', icon: '💑', description: 'Shared experience' },
     { slug: 'sex-massage', name: 'Sex Massage', icon: '🔥', description: 'Intimate pleasure' },
 ];
+
+// Fake categories (sub-types) for gentlemen's club - real SEO categories
+const clubCategories = [
+    { slug: 'strip-club', name: 'Strip Club', icon: '💃', description: 'Live striptease shows' },
+    { slug: 'sex-club', name: 'Sex Club', icon: '🔥', description: 'Adult entertainment' },
+    { slug: 'adult-club', name: 'Adult Club', icon: '🔞', description: 'Exclusive nightclub' },
+    { slug: 'topless-bar', name: 'Topless Bar', icon: '🍸', description: 'Topless entertainment' },
+    { slug: 'lap-dance', name: 'Lap Dance', icon: '💋', description: 'Private lap dances' },
+    { slug: 'pole-dance', name: 'Pole Dance', icon: '🎭', description: 'Pole dance shows' },
+    { slug: 'striptease', name: 'Striptease', icon: '✨', description: 'Live performances' },
+    { slug: 'private-dance', name: 'Private Dance', icon: '🎪', description: 'Exclusive dances' },
+    { slug: 'cabaret', name: 'Cabaret', icon: '🎩', description: 'Cabaret shows' },
+    { slug: 'nightclub-adult', name: 'Adult Nightclub', icon: '🌙', description: 'Adults-only venue' },
+];
+
+// Fake categories for swinger clubs
+const swingerCategories = [
+    { slug: 'couples-club', name: 'Couples Club', icon: '💑', description: 'Private club for couples' },
+    { slug: 'lifestyle-club', name: 'Lifestyle Club', icon: '🌟', description: 'Open-minded venue' },
+    { slug: 'private-party-club', name: 'Private Party', icon: '🎭', description: 'Exclusive parties' },
+    { slug: 'adult-sauna-club', name: 'Adult Sauna', icon: '♨️', description: 'Sauna with entertainment' },
+    { slug: 'libertine-club', name: 'Libertine Club', icon: '🔥', description: 'Libertine venue' },
+    { slug: 'fetish-club', name: 'Fetish Club', icon: '⛓️', description: 'Fetish & BDSM' },
+    { slug: 'nudist-club', name: 'Nudist Club', icon: '🏖️', description: 'Naturist venue' },
+    { slug: 'sex-party', name: 'Sex Party Venue', icon: '🎉', description: 'Organized adult events' },
+];
+
+// Select categories based on main category
+const categoryMap: Record<string, any[]> = {
+    'erotic-massage': massageCategories,
+    'gentlemens-club': clubCategories,
+    'swinger-club': swingerCategories,
+};
+const titleMap: Record<string, string> = {
+    'erotic-massage': 'Massage Types',
+    'gentlemens-club': 'Club Types',
+    'swinger-club': 'Venue Types',
+};
+const linkMap: Record<string, { url: string; text: string }> = {
+    'erotic-massage': { url: 'https://erotikmaps.com/erotic-massage', text: 'erotic massage venues' },
+    'gentlemens-club': { url: 'https://erotikmaps.com/gentlemens-club', text: "gentlemen's clubs" },
+    'swinger-club': { url: 'https://erotikmaps.com/swinger-club', text: 'swinger clubs' },
+};
+const categories = categoryMap[mainCategory] || massageCategories;
+const sectionTitle = titleMap[mainCategory] || 'Venue Types';
+const mainLink = linkMap[mainCategory] || { url: 'https://erotikmaps.com/erotic-massage', text: 'adult venues' };
 ---
 
-<section class="category-nav">
+<section class="category-nav" id="categories">
     <div class="container">
-        <h2>Explore by Massage Type in {city}</h2>
+        <h2>Browse {sectionTitle} in {city}</h2>
         <p class="nav-subtitle">Find the perfect experience for you</p>
         <div class="category-grid">
             {categories.map((cat) => (
@@ -40,7 +87,7 @@ const categories = [
         </div>
         <p class="seo-link">
             Looking for more options? Browse all 
-            <a href="https://erotikmaps.com/erotic-massage" title="Erotic massage worldwide">erotic massage venues worldwide</a> 
+            <a href={mainLink.url} title={`${mainLink.text} worldwide`}>{mainLink.text} worldwide</a> 
             on ErotikMaps.
         </p>
     </div>
